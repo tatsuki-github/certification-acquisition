@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AWS MLS対策</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app" class="max-w-4xl mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-6">AWS MLS対策</h1>
+        <div id="content"></div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        const QuizApp = () => {
+            const [allQuestions, setAllQuestions] = useState([]);
+            const [questions, setQuestions] = useState([]);
+            const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+            const [userAnswers, setUserAnswers] = useState([]);
+            const [startTime, setStartTime] = useState(null);
+            const [elapsedTime, setElapsedTime] = useState(0);
+            const [stage, setStage] = useState('initial'); // 'initial', 'setup', 'quiz', 'results', 'all-questions'
+            const [shuffleOptions, setShuffleOptions] = useState(false);
+            const timerRef = useRef(null);
+
+            useEffect(() => {
+                if (startTime && stage === 'quiz') {
+                    timerRef.current = setInterval(() => {
+                        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+                    }, 1000);
+
+                    return () => clearInterval(timerRef.current);
+                }
+            }, [startTime, stage]);
+
+            const handleFileUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) {
+                    alert('ファイルが選択されていません。');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (!data.questions || !Array.isArray(data.questions)) {
+                            throw new Error('無効なファイル形式です。');
+                        }
+                        setAllQuestions(data.questions);
+                        setStage('setup');
+                    } catch (error) {
+                        alert('ファイルの読み込み中にエラーが発生しました: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+
+            const shuffleArray = (array) => {
+                const shuffled = [...array];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            };
+
+            const shuffleOptionsArray = (options) => {
+                const entries = Object.entries(options);
+                const shuffled = shuffleArray(entries);
+                return Object.fromEntries(shuffled);
+            };
+
+            const startQuiz = (questionCount) => {
+                if (isNaN(questionCount) || questionCount < 1 || questionCount > allQuestions.length) {
+                    alert('有効な問題数を入力してください。');
+                    return;
+                }
+
+                const shuffledQuestions = shuffleArray(allQuestions).slice(0, questionCount);
+                const processedQuestions = shuffleOptions
+                    ? shuffledQuestions.map(q => ({
+                        ...q,
+                        shuffledOptions: shuffleOptionsArray(q.options)
+                    }))
+                    : shuffledQuestions;
+
+                setQuestions(processedQuestions);
+                setUserAnswers(new Array(questionCount).fill(null));
+                setCurrentQuestionIndex(0);
+                setStartTime(Date.now());
+                setStage('quiz');
+            };
+
+            const formatTime = (seconds) => {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes}分${remainingSeconds}秒`;
+            };
+
+            const getCurrentQuestion = () => questions[currentQuestionIndex];
+
+            const isAnswerCorrect = (questionIndex) => {
+                const question = questions[questionIndex];
+                const userAnswer = userAnswers[questionIndex];
+                const correctAnswer = Array.isArray(question.correct_answer)
+                    ? question.correct_answer
+                    : [question.correct_answer];
+
+                return userAnswer &&
+                    userAnswer.length === correctAnswer.length &&
+                    userAnswer.every(answer => correctAnswer.includes(answer));
+            };
+
+            const QuestionView = () => {
+                const question = getCurrentQuestion();
+                const isMultiple = Array.isArray(question.correct_answer) && question.correct_answer.length > 1;
+                const options = shuffleOptions && question.shuffledOptions
+                    ? question.shuffledOptions
+                    : question.options;
+                const labelLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+
+                return (
+                    <div className="space-y-4">
+                        <div className="text-lg font-medium">{question.question}</div>
+                        <div className="space-y-2">
+                            {isMultiple ? (
+                                Object.entries(options).map(([key, value], index) => (
+                                    <div key={key} className="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            id={`option-${key}`}
+                                            checked={(userAnswers[currentQuestionIndex] || []).includes(key)}
+                                            onChange={(e) => {
+                                                const checked = e.target.checked;
+                                                const currentAnswers = userAnswers[currentQuestionIndex] || [];
+                                                const newAnswers = checked
+                                                    ? [...currentAnswers, key]
+                                                    : currentAnswers.filter(a => a !== key);
+                                                const newUserAnswers = [...userAnswers];
+                                                newUserAnswers[currentQuestionIndex] = newAnswers;
+                                                setUserAnswers(newUserAnswers);
+                                            }}
+                                            className="form-checkbox"
+                                        />
+                                        <label htmlFor={`option-${key}`} className="ml-2">
+                                            {`${labelLetters[index]}: ${value}`}
+                                        </label>
+                                    </div>
+                                ))
+                            ) : (
+                                <div>
+                                    {Object.entries(options).map(([key, value], index) => (
+                                        <div key={key} className="flex items-center space-x-2">
+                                            <input
+                                                type="radio"
+                                                name="options"
+                                                value={key}
+                                                id={`option-${key}`}
+                                                checked={userAnswers[currentQuestionIndex]?.[0] === key}
+                                                onChange={() => {
+                                                    const newUserAnswers = [...userAnswers];
+                                                    newUserAnswers[currentQuestionIndex] = [key];
+                                                    setUserAnswers(newUserAnswers);
+                                                }}
+                                                className="form-radio"
+                                            />
+                                            <label htmlFor={`option-${key}`} className="ml-2">
+                                                {`${labelLetters[index]}: ${value}`}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            const QuestionsList = ({ questions, showAnswers = true }) => {
+                const labelLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+
+                return (
+                    <div className="space-y-4">
+                        {questions.map((question, index) => (
+                            <div key={index} className="p-4 border rounded">
+                                <div className="space-y-2">
+                                    <div className="font-medium">{index + 1}. {question.question}</div>
+                                    <ul className="space-y-1">
+                                        {Object.entries(question.options).map(([key, value], optIndex) => {
+                                            const isCorrect = (Array.isArray(question.correct_answer)
+                                                ? question.correct_answer
+                                                : [question.correct_answer]).includes(key);
+
+                                            const isUserWrong = showAnswers && !isCorrect && userAnswers[index]?.includes(key);
+                                            const bgColor = isCorrect ? 'bg-green-50' : isUserWrong ? 'bg-red-50' : '';
+
+                                            return (
+                                                <li
+                                                    key={key}
+                                                    className={`p-2 rounded ${bgColor}`}
+                                                >
+                                                    {`${labelLetters[optIndex]}: ${value}`}
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                    {showAnswers && (
+                                        <div className="mt-2 space-y-2">
+                                            <div className="text-sm text-gray-600">
+                                                <span className="font-medium">正解:</span> {
+                                                    Array.isArray(question.correct_answer) 
+                                                        ? question.correct_answer.map(ans => labelLetters[Object.keys(question.options).indexOf(ans)]).join(', ')
+                                                        : labelLetters[Object.keys(question.options).indexOf(question.correct_answer)]
+                                                }
+                                            </div>
+                                            <div className="text-sm text-gray-600">
+                                                <span className="font-medium">解説:</span> {question.explanation}
+                                            </div>
+                                            {question.references && question.references.length > 0 && (
+                                                <div className="text-sm text-gray-600">
+                                                    <span className="font-medium">参考:</span>
+                                                    <ul className="list-disc list-inside pl-2 mt-1">
+                                                        {question.references.map((ref, refIndex) => (
+                                                            <li key={refIndex}>
+                                                                <a 
+                                                                    href={ref} 
+                                                                    target="_blank" 
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-blue-600 hover:text-blue-800 hover:underline"
+                                                                >
+                                                                    {ref}
+                                                                </a>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
+
+            const ResultsView = () => {
+                const correctCount = userAnswers.filter((_, index) => isAnswerCorrect(index)).length;
+                const accuracy = Math.round((correctCount / questions.length) * 100);
+
+                return (
+                    <div className="space-y-6">
+                        <div className="space-y-2">
+                            <div>正解数: {correctCount}</div>
+                            <div>不正解数: {questions.length - correctCount}</div>
+                            <div>正答率: {accuracy}%</div>
+                            <div>所要時間: {formatTime(elapsedTime)}</div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-medium">問題の復習</h3>
+                            <QuestionsList questions={questions} />
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div>
+                    {stage === 'initial' && (
+                        <div>
+                            <input
+                                type="file"
+                                accept=".json"
+                                onChange={handleFileUpload}
+                                className="mb-4"
+                            />
+                        </div>
+                    )}
+
+                    {stage === 'setup' && (
+                        <div className="p-4 border rounded">
+                            <div className="space-y-4 pt-6">
+                                <div>
+                                    <label htmlFor="question-count">
+                                        出題数を選択してください（最大{allQuestions.length}問）：
+                                    </label>
+                                    <input
+                                        id="question-count"
+                                        type="number"
+                                        min="1"
+                                        max={allQuestions.length}
+                                        defaultValue={Math.min(10, allQuestions.length)}
+                                        className="w-32 form-input"
+                                    />
+                                </div>
+
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        id="shuffle-options"
+                                        checked={shuffleOptions}
+                                        onChange={(e) => setShuffleOptions(e.target.checked)}
+                                        className="form-checkbox"
+                                    />
+                                    <label htmlFor="shuffle-options" className="ml-2">選択肢をシャッフルする</label>
+                                </div>
+
+                                <div className="space-x-2">
+                                    <button
+                                        onClick={() => {
+                                            const count = parseInt(document.getElementById('question-count').value);
+                                            startQuiz(count);
+                                        }}
+                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        クイズを開始
+                                    </button>
+                                    <button
+                                        onClick={() => setStage('all-questions')}
+                                        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        全問題と解答を表示
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {stage === 'quiz' && (
+                        <div className="p-4 border rounded">
+                            <div className="space-y-4 pt-6">
+                                <div className="text-lg font-bold">
+                                    経過時間: {formatTime(elapsedTime)}
+                                </div>
+
+                                <progress
+                                    value={(currentQuestionIndex + 1) / questions.length * 100}
+                                    max="100"
+                                    className="mb-4 w-full"
+                                />
+
+                                <div className="mb-2">
+                                    問題 {currentQuestionIndex + 1} / {questions.length}
+                                </div>
+
+                                <QuestionView />
+
+                                <div className="space-x-2">
+                                    <button
+                                        onClick={() => setCurrentQuestionIndex(i => Math.max(0, i - 1))}
+                                        disabled={currentQuestionIndex === 0}
+                                        className="bg-gray-700 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        前の問題
+                                    </button>
+                                    <button
+                                        onClick={() => setCurrentQuestionIndex(i => Math.min(questions.length - 1, i + 1))}
+                                        disabled={currentQuestionIndex === questions.length - 1}
+                                        className="bg-gray-700 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        次の問題
+                                    </button>
+                                    <button
+                                        onClick={() => setStage('results')}
+                                        disabled={userAnswers.includes(null)}
+                                        className={`text-white font-bold py-2 px-4 rounded ${userAnswers.includes(null) ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-700'}`}
+                                    >
+                                        結果を表示
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {stage === 'results' && (
+                        <div className="p-4 border rounded">
+                            <div className="pt-6">
+                                <ResultsView />
+                                <button
+                                    onClick={() => {
+                                        setStage('setup');
+                                        setShuffleOptions(false);
+                                        setUserAnswers([]);
+                                        setElapsedTime(0);
+                                    }}
+                                    className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                >
+                                    もう一度挑戦する
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {stage === 'all-questions' && (
+                        <div className="p-4 border rounded">
+                            <div className="pt-6">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="text-xl font-bold">全問題一覧（全{allQuestions.length}問）</h2>
+                                    <button
+                                        onClick={() => setStage('setup')}
+                                        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        戻る
+                                    </button>
+                                </div>
+                                <QuestionsList questions={allQuestions} />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<QuizApp />, document.getElementById('content'));
+    </script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</body>
+</html>
