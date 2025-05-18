@@ -1,12 +1,8 @@
 {
     "metadata": {
-        "examId": "mls",
+        "examId": "aws-mls",
         "examName": "AWS Machine Learning Specialty",
-        "description": "AWS認定 機械学習 - 専門知識試験の対策問題",
-        "totalQuestions": 65,
-        "passScore": 750,
-        "examTime": 180,
-        "lastUpdated": "2025-05-18"
+        "description": "AWS認定 機械学習 - 専門知識試験の対策問題"
     },
     "questions": [
         {

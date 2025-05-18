@@ -24,49 +24,9 @@
             const [elapsedTime, setElapsedTime] = useState(0);
             const [stage, setStage] = useState('exam-selection'); // 'exam-selection', 'setup', 'quiz', 'results', 'all-questions'
             const [shuffleOptions, setShuffleOptions] = useState(false);
-            const [examFiles, setExamFiles] = useState([]);
             const [examMetadata, setExamMetadata] = useState(null);
             const [isLoading, setIsLoading] = useState(false);
             const timerRef = useRef(null);
-
-            // 利用可能な試験ファイルのリスト
-            // 実際の環境では、サーバーサイドAPIでディレクトリ内容を取得するのが理想的
-            const availableExamFiles = [
-                "mls.json",
-            ];
-
-            useEffect(() => {
-                // 試験ファイルリストを設定
-                setExamFiles(availableExamFiles);
-            }, []);
-
-            // 試験ファイルのメタデータを取得するヘルパー関数
-            const loadExamMetadata = async (filename) => {
-                try {
-                    setIsLoading(true);
-                    const response = await fetch(`questions/${filename}`);
-                    const data = await response.json();
-                    
-                    if (!data.metadata || !data.questions) {
-                        throw new Error(`ファイル ${filename} には必要なメタデータまたは問題が含まれていません。`);
-                    }
-                    
-                    return {
-                        filename,
-                        metadata: data.metadata,
-                        questionCount: data.questions.length
-                    };
-                } catch (error) {
-                    console.error(`${filename} の読み込み中にエラー: ${error.message}`);
-                    return {
-                        filename,
-                        metadata: { examName: filename.replace('.json', '') },
-                        error: error.message
-                    };
-                } finally {
-                    setIsLoading(false);
-                }
-            };
 
             useEffect(() => {
                 if (startTime && stage === 'quiz') {
@@ -91,27 +51,6 @@
                 const entries = Object.entries(options);
                 const shuffled = shuffleArray(entries);
                 return Object.fromEntries(shuffled);
-            };
-
-            // 選択した試験ファイルを読み込む
-            const selectExam = async (filename) => {
-                try {
-                    setIsLoading(true);
-                    const response = await fetch(`questions/${filename}`);
-                    const data = await response.json();
-                    
-                    if (!data.metadata || !data.questions || !Array.isArray(data.questions)) {
-                        throw new Error('無効な問題ファイル形式です。');
-                    }
-                    
-                    setExamMetadata(data.metadata);
-                    setAllQuestions(data.questions);
-                    setStage('setup');
-                } catch (error) {
-                    alert('問題の読み込み中にエラーが発生しました: ' + error.message);
-                } finally {
-                    setIsLoading(false);
-                }
             };
 
             const startQuiz = (questionCount) => {
@@ -155,62 +94,133 @@
                     userAnswer.every(answer => correctAnswer.includes(answer));
             };
 
-            // 試験選択画面のコンポーネント
+            // ファイルアップロード対応のExamSelectionView
             const ExamSelectionView = () => {
-                const [examInfoList, setExamInfoList] = useState([]);
-                const [loadingStatus, setLoadingStatus] = useState({});
+                const [dragOver, setDragOver] = useState(false);
                 
-                useEffect(() => {
-                    const loadAllExamMetadata = async () => {
-                        const examInfoPromises = examFiles.map(filename => {
-                            setLoadingStatus(prev => ({ ...prev, [filename]: true }));
-                            return loadExamMetadata(filename);
-                        });
-                        
-                        const results = await Promise.all(examInfoPromises);
-                        setExamInfoList(results);
-                        
-                        const newStatus = {};
-                        results.forEach(r => {
-                            newStatus[r.filename] = false;
-                        });
-                        setLoadingStatus(newStatus);
-                    };
+                const handleFileUpload = (file) => {
+                    if (!file) return;
                     
-                    loadAllExamMetadata();
-                }, [examFiles]);
+                    setIsLoading(true);
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            
+                            if (!data.metadata || !data.questions || !Array.isArray(data.questions)) {
+                                alert('無効な問題ファイル形式です。metadata と questions 配列が必要です。');
+                                setIsLoading(false);
+                                return;
+                            }
+                            
+                            // ファイル名をメタデータに追加
+                            data.metadata.filename = file.name;
+                            
+                            // 試験データをセットして設定画面へ
+                            setExamMetadata(data.metadata);
+                            setAllQuestions(data.questions);
+                            setStage('setup');
+                            setIsLoading(false);
+                        } catch (error) {
+                            alert('JSONファイルの解析に失敗しました: ' + error.message);
+                            setIsLoading(false);
+                        }
+                    };
+                    reader.onerror = () => {
+                        alert('ファイルの読み込み中にエラーが発生しました');
+                        setIsLoading(false);
+                    };
+                    reader.readAsText(file);
+                };
+                
+                const handleDragOver = (e) => {
+                    e.preventDefault();
+                    setDragOver(true);
+                };
+                
+                const handleDragLeave = () => {
+                    setDragOver(false);
+                };
+                
+                const handleDrop = (e) => {
+                    e.preventDefault();
+                    setDragOver(false);
+                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                        handleFileUpload(e.dataTransfer.files[0]);
+                    }
+                };
                 
                 return (
                     <div className="p-4 border rounded">
-                        <h2 className="text-xl font-bold mb-4">利用可能な試験</h2>
-                        {examInfoList.length === 0 && (
-                            <div className="text-center py-8">
-                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-                                <p className="mt-2 text-gray-600">試験リストを読み込み中...</p>
+                        <h2 className="text-xl font-bold mb-4">問題ファイルをアップロード</h2>
+                        
+                        <div
+                            className={`border-2 border-dashed p-8 text-center cursor-pointer 
+                            ${dragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            onClick={() => document.getElementById('file-upload').click()}
+                        >
+                            <input
+                                id="file-upload"
+                                type="file"
+                                accept=".json"
+                                className="hidden"
+                                onChange={(e) => handleFileUpload(e.target.files[0])}
+                            />
+                            <div className="text-gray-700 mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
                             </div>
-                        )}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {examInfoList.map(examInfo => (
-                                <div 
-                                    key={examInfo.filename}
-                                    className="p-4 border rounded hover:bg-gray-100 cursor-pointer"
-                                    onClick={() => selectExam(examInfo.filename)}
-                                >
-                                    <h3 className="text-lg font-medium">
-                                        {examInfo.metadata?.examName || examInfo.filename.replace('.json', '')}
-                                    </h3>
-                                    <p className="text-sm text-gray-600">
-                                        {examInfo.metadata?.description || '説明なし'}
-                                    </p>
-                                    <p className="text-xs text-gray-500 mt-2">
-                                        問題数: {examInfo.questionCount || '不明'}
-                                        {examInfo.metadata?.lastUpdated && ` | 最終更新: ${examInfo.metadata.lastUpdated}`}
-                                    </p>
-                                    {examInfo.error && (
-                                        <p className="text-xs text-red-500 mt-1">{examInfo.error}</p>
-                                    )}
-                                </div>
-                            ))}
+                            <p className="font-bold">クリックまたはドラッグ＆ドロップ</p>
+                            <p className="text-sm text-gray-600 mt-1">JSONファイルをアップロード</p>
+                        </div>
+                        
+                        <div className="mt-6">
+                            <h3 className="font-bold mb-2">サポートする JSON 形式:</h3>
+                            <pre className="bg-gray-100 p-3 rounded text-xs overflow-auto">
+{`{
+  "metadata": {
+    "examId": "AZ-140",
+    "examName": "Microsoft Azure Virtual Desktop Specialty",
+    "description": "Azure Virtual Desktop環境の計画、提供、管理に関する専門知識を評価する認定試験の対策問題"
+  },
+  "questions": [
+    {
+      "question": "質問文",
+      "options": {
+        "a": "選択肢A",
+        "b": "選択肢B",
+        "c": "選択肢C",
+        "d": "選択肢D"
+      },
+      "correct_answer": "a",  // または ["a", "b"] (複数選択の場合)
+      "explanation": "解説文",
+      "references": ["参考URL1", "参考URL2"]
+    },
+    // 他の問題...
+  ]
+}`}
+                            </pre>
+                        </div>
+                        
+                        <div className="mt-4">
+                            <p className="text-sm text-gray-600">
+                                <span className="font-bold">注意:</span> アップロードしたファイルはローカルで処理され、サーバーには送信されません。
+                            </p>
+                        </div>
+
+                        <div className="mt-6">
+                            <h3 className="font-bold mb-2">サンプルJSONファイル:</h3>
+                            <a 
+                                href="data:text/json;charset=utf-8,{%22metadata%22:{%22examId%22:%22AZ-140%22,%22examName%22:%22Microsoft%20Azure%20Virtual%20Desktop%20Specialty%22,%22description%22:%22Azure%20Virtual%20Desktop環境の計画、提供、管理に関する専門知識を評価する認定試験の対策問題%22},%22questions%22:[{%22question%22:%22Reactの基本コンポーネントは？%22,%22options%22:{%22a%22:%22クラス%22,%22b%22:%22関数%22,%22c%22:%22クラスと関数の両方%22,%22d%22:%22オブジェクト%22},%22correct_answer%22:%22c%22,%22explanation%22:%22ReactのコンポーネントはクラスコンポーネントとFunctional Componentの両方があります。%22},{%22question%22:%22Reactフックはどのコンポーネントで使用できますか？（複数選択）%22,%22options%22:{%22a%22:%22クラスコンポーネント%22,%22b%22:%22関数コンポーネント%22,%22c%22:%22ネイティブHTML%22,%22d%22:%22カスタムフック%22},%22correct_answer%22:[%22b%22,%22d%22],%22explanation%22:%22ReactフックはFunctional Componentとカスタムフックでのみ使用できます。%22},{%22question%22:%22ReactのuseEffect内でクリーンアップが必要なのはどんな時？%22,%22options%22:{%22a%22:%22APIリクエスト時%22,%22b%22:%22イベントリスナー登録時%22,%22c%22:%22ローカル変数更新時%22,%22d%22:%22レンダリング後毎回%22},%22correct_answer%22:%22b%22,%22explanation%22:%22イベントリスナーやタイマーなど、メモリリークを防ぐためにコンポーネントのアンマウント時にクリーンアップが必要です。%22}]}" 
+                                download="sample-az140-quiz.json"
+                                className="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                サンプルJSONをダウンロード
+                            </a>
                         </div>
                     </div>
                 );
@@ -390,24 +400,15 @@
 
                     {stage === 'setup' && (
                         <div className="p-4 border rounded">
-                            {/* 試験メタデータ表示 */}
+                            {/* 試験メタデータ表示 - シンプルなバージョン */}
                             {examMetadata && (
                                 <div className="mb-6 p-4 bg-blue-50 rounded">
-                                    <h2 className="text-lg font-semibold mb-2">{examMetadata.examName}</h2>
-                                    <p className="text-sm">{examMetadata.description}</p>
-                                    <div className="mt-2 text-sm">
-                                        {examMetadata.totalQuestions && (
-                                            <span className="mr-3"><span className="font-medium">総問題数:</span> {examMetadata.totalQuestions}</span>
-                                        )}
-                                        {examMetadata.passScore && (
-                                            <span className="mr-3"><span className="font-medium">合格点:</span> {examMetadata.passScore}</span>
-                                        )}
-                                        {examMetadata.examTime && (
-                                            <span className="mr-3"><span className="font-medium">試験時間:</span> {examMetadata.examTime}分</span>
-                                        )}
-                                    </div>
-                                    {examMetadata.lastUpdated && (
-                                        <div className="text-xs text-gray-500 mt-1">最終更新: {examMetadata.lastUpdated}</div>
+                                    <h2 className="text-lg font-semibold mb-2">
+                                        {examMetadata.examName}
+                                        {examMetadata.examId && ` (${examMetadata.examId})`}
+                                    </h2>
+                                    {examMetadata.description && (
+                                        <p className="text-sm">{examMetadata.description}</p>
                                     )}
                                 </div>
                             )}

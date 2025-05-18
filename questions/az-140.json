@@ -1,0 +1,798 @@
+{
+    "metadata": {
+        "examId": "az-140",
+        "examName": "Microsoft Azure Virtual Desktop Specialty",
+        "description": "Azure Virtual Desktop環境の計画、提供、管理に関する専門知識を評価する認定試験の対策問題"
+    },
+    "questions": [
+        {
+        "category": "Azure Virtual Desktop - ネットワーキング",
+        "question": "あなたは、Azure Virtual Desktop のデプロイを計画しています。クライアントとセッション ホストの間に直接の UDP 接続が確立され、RDP 接続がより機密性の低いネットワーク トラフィックよりも優先されるソリューションを推奨する必要があります。どの2つのコンポーネントを推奨事項に含める必要がありますか?",
+        "options": {
+            "A": "ネットワーク セキュリティ グループ (NSG)",
+            "B": "プライベート エンドポイント",
+            "C": "サービス エンドポイント",
+            "D": "サービスの品質 (QoS)",
+            "E": "RDP ショートパス"
+        },
+        "correct_answer": ["D", "E"],
+        "explanation": "RDP Shortpathは、各セッションにスロットル レートを指定して、送信ネットワーク トラフィックを制限する機能です。優先順位は、QoSポリシーを使用して定義できます。仮想ネットワークは、優先順位やトラフィック制限ではなく、ネットワーク接続を管理するために必要です。NSGは、宛先との間のトラフィックをブロックおよび許可します。プライベート エンドポイントを使用すると、Azure内のネットワーク接続が可能になり、インターネットの使用が完全に必要なくなります。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/",
+            "https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/4-understand-azure-virtual-desktop-network-connectivity"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - パフォーマンス最適化",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。セッション ホストとの対話時に、入力と反応時間の間に顕著な遅延があるとユーザーが報告しています。ユーザーの接続の問題を最小限に抑えるソリューションを推奨する必要があります。何を推奨すればよいですか?",
+        "options": {
+            "A": "Azure Virtual Desktopとインターネットの間にプロキシ サーバーをデプロイします。",
+            "B": "RDP Shortpathを無効にします。",
+            "C": "各セッション ホストでDNS リゾルバー キャッシュをクリアするポリシーを実装します。",
+            "D": "IPパケットのヘッダーにDSCP マーカーを挿入するポリシーを実装します。"
+        },
+        "correct_answer": ["D"],
+        "explanation": "DSCPマーカーとサービス品質 (QoS) ポリシーは、ネットワーク パフォーマンスを向上するために使用され、低パフォーマンスの原因となるジッター、パケット損失、遅延を最小限に抑えるのに役立ちます。RDP Shortpathを無効にして、プロキシ サーバーなどの追加のネットワーク ホップを導入してもパフォーマンスの問題は減少せず、むしろ増加する可能性があります。DNS リゾルバー キャッシュをフラッシュしても、パフォーマンスには影響ありません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/11-plan-implement-quality-service-azure-virtual-desktop",
+            "https://learn.microsoft.com/azure/virtual-desktop/rdp-quality-of-service-qos#make-sure-your-network-is-ready"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ネットワーキング",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。Azure Virtual Desktopセッション ホストからインターネットへのネットワーク トラフィックを、ネットワーク仮想アプライアンス (NVA) を使用して監視する予定です。NVA経由でトラフィックが流れるようにする必要があります。何を構成する必要がありますか?",
+        "options": {
+            "A": "ネットワーク セキュリティ グループ (NSG)",
+            "B": "仮想ネットワーク",
+            "C": "Azure VPN ゲートウェイ",
+            "D": "ルート テーブル"
+        },
+        "correct_answer": ["D"],
+        "explanation": "ユーザー定義ルートを使用すると、Azure での送信トラフィックの次ホップを定義できます。NSG は、宛先との間のトラフィックをブロックおよび許可しますが、トラフィックをルーティングすることはできません。仮想ネットワークは、トラフィックのルーティングではなく、ネットワーク接続を管理するために必要です。Azure への VPN 接続の構成には、VPN ゲートウェイが必要です。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/",
+            "https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/3-manage-connectivity-internet-premises-networks",
+            "https://learn.microsoft.com/windows-server/networking/sdn/manage/use-network-virtual-appliances-on-a-vn"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ネットワーキング",
+        "question": "あなたは、Azure Virtual Desktop のデプロイを計画しています。Azure Virtual Desktopクライアントが Azure Virtual Desktop セッション ホストへの接続を確立できるようにする必要があります。どの送信接続をクライアントから許可すればよいでしょうか?",
+        "options": {
+            "A": "TCP 443",
+            "B": "TCP 3389",
+            "C": "UDP 443",
+            "D": "UDP 3389"
+        },
+        "correct_answer": ["A"],
+        "explanation": "Azure Virtual Desktopにユーザーが接続すると、サービスに対する逆接続が安全に確立され、受信ポートを開く必要がなくなります。既定ではTCPポート443が使用されます。ユーザーが接続するリソースを選択すると、クライアントは関連付けられたRDPファイルを使用し、TCP 443接続を介し、最も近いAzure Virtual Desktopゲートウェイ インスタンスへのセキュアなTLS 1.2接続を確立します。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/4-understand-azure-virtual-desktop-network-connectivity"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ストレージ",
+        "question": "Pool1という名前の Azure Virtual Desktop ホスト プールを所有しています。Pool1 の FSLogix プロファイル コンテナーを格納するストレージ ソリューションを推奨する必要があります。このソリューションは、geo冗長性を提供し、管理オーバーヘッドを最小限に抑えたものである必要があります。レコメンデーションには何を含める必要がありますか?",
+        "options": {
+            "A": "Azure Data Share (Azure データ共有サービス)",
+            "B": "Azure Files",
+            "C": "Azure NetApp ファイルズ",
+            "D": "記憶域スペース ダイレクト"
+        },
+        "correct_answer": ["B"],
+        "explanation": "Azure Files は、すべての冗長性オプションをサポートし、マネージド ソリューションを構成します。Azure NetApp Files では geo 冗長性をサポートしていません。記憶域スペース ダイレクトは、自己管理型のソリューションです。Azure Data Share では、Azure Virtual Desktop はサポートしていません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-fslogix/5-storage-options-for-fslogix-profile-containers"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ストレージ",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。FSLogix プロファイルをサポートし、次の要件を満たすストレージ ソリューションを実装する予定です。• 複数のセッション ホストを使用してアクセスできる • SMB プロトコルを使用している • 運用コストが最小限に抑えられている どの種類のストレージ ソリューションを使用すればよいでしょうか?",
+        "options": {
+            "A": "Azure Disk Storage",
+            "B": "Azure NetApp ファイルズ",
+            "C": "Blob コンテナーを使う Azure Storage",
+            "D": "ファイル共有を使う Azure Storage"
+        },
+        "correct_answer": ["D"],
+        "explanation": "ファイル共有を含む Azure Storage は、SMB または NFS ファイル共有として、Windows、Linux、または MacOS オペレーティング システムに同時にマウントできます。これにより、複数のセッション ホストから同時にアクセスすることが可能になります。BLOB コンテナーを含む Azure Storage は SMB プロトコルをサポートしておらず、セッション ホストがドライブとしてマウントされないため、このソリューションは正しくありません。Azure NetApp Files は不正解です。このソリューションは、4 TiB 以上の容量を必要とする、高い運用コストが求められるエンタープライズレベルのファイル ストレージ ソリューションです。Azure Disk Storage は、一度に1つの仮想マシンにのみアタッチでき、複数のセッション ホストで共有できないブロックレベルのストレージ ボリュームであるため、正しくありません。",
+        "references": [
+            "https://learn.microsoft.com/azure/storage/common/storage-account-overview",
+            "https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ストレージ",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。FSLogix プロファイル コンテナーを Azure NetApp Files を使用して格納する予定です。Azure NetApp Files アカウントと容量プールを作成します。次に何を行う必要がありますか?",
+        "options": {
+            "A": "Azure Virtual Desktop ホスト プールを構成します。",
+            "B": "FSLogix プロファイル コンテナーを構成します。",
+            "C": "Azure NetApp Files ボリュームを作成します。",
+            "D": "新しい仮想マシンを作成します。"
+        },
+        "correct_answer": ["C"],
+        "explanation": "Azure NetApp Files ボリュームを作成することが正解です。ボリュームを作成すると、それを使用して FSLogix プロファイル コンテナーを Azure Virtual Desktop インフラストラクチャに格納できます。FSLogix プロファイル コンテナーを構成することは不正解です。ストレージの場所として Azure NetApp Files ボリュームを使用するよう FSLogix プロファイル コンテナーを構成する前に、容量プール内にボリュームを作成する必要があります。Azure Virtual Desktop ホスト プールを作成することは不正解です。ホスト プールは、Azure NetApp Files ボリュームが作成されるまで、FSLogix プロファイル コンテナーに構成できません。新しい仮想マシンを作成することは、Azure NetApp Files を使用して FSLogix プロファイル コンテナーを格納する要件に対処しないため、不正解です。",
+        "references": [
+            "https://learn.microsoft.com/azure/azure-netapp-files/azure-netapp-files-quickstart-set-up-account-create-volumes?tabs=azure-cli",
+            "https://learn.microsoft.com/azure/virtual-desktop/create-fslogix-profile-container"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ストレージ",
+        "question": "Pool1 という名前の Azure Virtual Desktop ホスト プールを所有しています。Pool1 の FSLogix プロファイル コンテナーを格納するストレージ ソリューションを実装する必要があります。このソリューションでは、アクセス層がサポートされる必要があります。どの種類のストレージ アカウントを使用すればよいでしょうか?",
+        "options": {
+            "A": "汎用 v2",
+            "B": "Premium ブロック BLOB",
+            "C": "Premium ファイル共有",
+            "D": "Premium ページ BLOB"
+        },
+        "correct_answer": ["A"],
+        "explanation": "Azure Virtual Desktop は、汎用 v2 と Premium のファイル共有ストレージ アカウントの両方に作成されたファイル共有を使用できますが、アクセス層をサポートするのは前者のみです。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-storage-azure-virtual-desktop/4-configure-storage-accounts"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ストレージ",
+        "question": "あなたは Contoso, Ltd のクラウド アーキテクトです。同社は、リモート従業員用に Azure Virtual Desktop をデプロイする予定です。この会社には、厳密なコンプライアンスとデータ所在地の要件があります。ユーザーはさまざまな地理的な場所に分散しています。あなたは、最適なパフォーマンスとコスト効率を保証する Azure Virtual Desktop ユーザー データのストレージを計画して実装する必要があります。どうすればよいでしょうか?",
+        "options": {
+            "A": "データの冗長性を確保するために、セッション ホストとは異なるリージョンに Azure Files をデプロイします。",
+            "B": "セッション ホストと同じリージョンに Azure Files をデプロイし、I/O 集中型ワークロードに Premium ファイル共有を使用します。",
+            "C": "スケールに関係なく、すべての Azure Virtual Desktop デプロイに Azure NetApp Files を使用します。",
+            "D": "コストを最小限に抑えるには、すべてのワークロードに Standard ファイル共有を使用します。"
+        },
+        "correct_answer": ["B"],
+        "explanation": "セッション ホストと同じリージョンに Azure Files をデプロイすると待機時間が最小限になり、データ転送コストが削減されるためです。I/O 集中型ワークロードに Premium ファイル共有を使用すると、ハイパフォーマンスと低遅延が保証されます。Azure NetApp Files は、すべてのデプロイではなく、大規模な Azure Virtual Desktop デプロイに推奨されているためです。Standard ファイル共有は低コストですが、I/O 集中型ワークロードに必要なパフォーマンスが提供されないおそれがあります。セッション ホストとは異なるリージョンに Azure Files をデプロイすると、待機時間が長くなり、パフォーマンスが低下する場合があります。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-storage-azure-virtual-desktop/2-plan-storage-user-data"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - パフォーマンス最適化",
+        "question": "会社で Azure NetApp Files に格納されている FSLogix プロファイル コンテナーを使用して Azure Virtual Desktop をデプロイしました。最近、ユーザーはログイン時間の遅さとプロファイルの読み込みの問題を報告しました。ユーザー エクスペリエンスを向上させるには、FSLogix プロファイル コンテナーのパフォーマンスを最適化する必要があります。どのようなアクションを取る必要がありますか?",
+        "options": {
+            "A": "Azure NetApp Files ボリュームの geo 冗長ストレージを有効にします。",
+            "B": "Azure NetApp Files ボリューム向けの SMB の継続的な可用性を有効にします。",
+            "C": "容量プールのサイズを増やし、Azure NetApp Files の Premium サービス レベルにアップグレードします。",
+            "D": "FSLogix プロファイル コンテナーのトランザクション最適化レベルを使用して Azure Files に切り替えます。"
+        },
+        "correct_answer": ["C"],
+        "explanation": "容量プールのサイズを増やし、Azure NetApp Files の Premium サービス レベルにアップグレードすると、より多くの IOPS と帯域幅が提供され、パフォーマンスが向上します。geo 冗長ストレージを有効にしてもパフォーマンスは影響を受けず、トランザクション最適化レベルを備えた Azure Files に切り替えるとパフォーマンスが低下する可能性があり、SMB の継続的な可用性を有効にしてもストレージのパフォーマンスの問題に直接対処することはできません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-storage-azure-virtual-desktop/2-plan-storage-user-data",
+            "https://learn.microsoft.com/training/modules/implement-manage-fslogix/9-implement-azure-netapp-files-for-azure-virtual-desktop"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ホストプール設定",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。Host1 と Host2 という名前の 2 つのセッション ホストを含む Pool1 という名前のホスト プールを構成する予定です。Host1 がセッションの上限の 10 に達してから、ユーザーが Host2 に接続するようにする必要があります。Pool1 に対して構成する必要がある 2 つの設定はどれですか?",
+        "options": {
+            "A": "個人用のホスト プールの種類",
+            "B": "プールのホスト プールの種類",
+            "C": "幅優先の負荷分散の負荷分散アルゴリズム",
+            "D": "深さ優先の負荷分散の負荷分散アルゴリズム"
+        },
+        "correct_answer": ["B", "D"],
+        "explanation": "深さ優先の負荷分散では、ユーザーがホスト プール内の別のホストにリダイレクトされる前に、セッション ホストが最大のセッション制限に達していることが保証されます。プールとして構成されたホスト プールのみ、負荷分散アルゴリズムと最大セッション制限を使用できます。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/host-pool-load-balancing"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - 仮想マシンサイジング",
+        "question": "次の種類のワークロードを実行する必要がある Azure Virtual Desktop インフラストラクチャを設計しています。• データベース入力アプリケーションおよび Microsoft Word 文書の作成などの汎用用途 • コンピューター支援の設計とビデオ編集用に GPU 最適化されている それぞれのワークロードの種類に必要な仮想マシンのサイズを推奨する必要があります。どの 2 つの仮想マシンのサイズを推奨しますか?",
+        "options": {
+            "A": "D シリーズ",
+            "B": "E シリーズ",
+            "C": "FX シリーズ",
+            "D": "L シリーズ",
+            "E": "N シリーズ"
+        },
+        "correct_answer": ["A", "E"],
+        "explanation": "D シリーズでは、汎用の使用をサポートしています。N シリーズでは、GPU 最適化ワークロードをサポートしています。E シリーズでは、メモリ最適化ワークロードをサポートしています。FX シリーズでは、コンピューティング最適化ワークロードをサポートしています。L シリーズでは、ストレージ最適化ワークロードをサポートしています。",
+        "references": [
+            "https://learn.microsoft.com/windows-server/remote/remote-desktop-services/virtual-machine-recs?toc=%2Fazure%2Fvirtual-desktop%2Ftoc.json&bc=%2Fazure%2Fvirtual-desktop%2Fbreadcrumb%2Ftoc.json",
+            "https://learn.microsoft.com/azure/virtual-machines/sizes"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - 仮想マシン設定",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。次の仮想マシンの作成に、Hyper-V マネージャーを使用します。• VM1:Windows 10 Enterprise を実行する第 1 世代仮想マシン • VM2:Windows 10 Enterprise を実行する第 2 世代仮想マシン • VM3:Windows 11 Enterprise を実行する第 2 世代仮想マシン • VM4:Windows Server 2019 を実行する第 2 世代仮想マシン 次の要件を満たす新しいセッション ホストをデプロイする予定です。• トラステッド起動をサポートしている。• セキュア ブートと vTPM をサポートしている。• ユーザーごとのアクセス料金をサポートしている。セッション ホストに使用するイメージを作成できる仮想マシンはどれですか?",
+        "options": {
+            "A": "VM1 のみ",
+            "B": "VM2、VM3、および VM4",
+            "C": "VM2 のみ",
+            "D": "VM2 および VM3 のみ",
+            "E": "VM3 のみ",
+            "F": "VM3 と VM4 のみ"
+        },
+        "correct_answer": ["B"],
+        "explanation": "セキュア ブートと vTPM を使用した、トラステッド起動の仮想マシンをサポートするには、Windows 10 Enterprise または Windows 11 Enterprise 第 2 世代の仮想マシンが必要です。ユーザーごとのアクセス料金は、Azure Virtual Desktop インフラストラクチャへの外部アクセスにのみ適用されます。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-machines/trusted-launch?WT.mc_id=Portal-fx",
+            "https://learn.microsoft.com/azure/virtual-desktop/prerequisites#operating-systems-and-licenses",
+            "https://learn.microsoft.com/azure/virtual-machines/generation-2"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - PowerShell管理",
+        "question": "Pool1 という名前の Azure Virtual Desktop ホスト プールを所有しています。PowerShell を使用し、Pool1 にセッション ホストとして、Windows 11 Enterprise マルチセッション Azure 仮想マシンを参加させる必要があります。最初にどの PowerShell コマンドレットを実行すればよいでしょうか?",
+        "options": {
+            "A": "New-AzRoleAssignment",
+            "B": "New-AzWvdRegistrationInfo",
+            "C": "Update-AzWvdHostPool",
+            "D": "Update-AzWvdSessionHost"
+        },
+        "correct_answer": ["B"],
+        "explanation": "New-AzWvdRegistrationInfo では、セッション ホストがホスト プールに参加することを承認する登録トークンが作成され、それがローカル コンピューター上の新しいファイルに保存されます。New-AzRoleAssignment では、Azure Active Directory ユーザーがホスト プールの既定のデスクトップ アプリ グループに追加されます。Update-AzWvdSessionHost は、セッション ホストの設定を更新します。Update-AzWvdHostPool は、ホスト プールの設定を更新します。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/create-configure-host-pools-session-hosts/2-automate-creation-host-pool-powershell"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - 自動スケーリング",
+        "question": "会社では、個人用ホスト プールを使った Microsoft Azure Virtual Desktop を使用しています。IT 部門では、ユーザーの要求に基づいてセッション ホスト VM のスケーリングを自動化する必要があります。コストを削減するために、ユーザーの要求に応じてセッション ホスト VM の数を調整するソリューションを実装する必要があります。どのようなアクションを取る必要がありますか?",
+        "options": {
+            "A": "スケーリング プランを作成して割り当てます。",
+            "B": "セッション ホスト ドレイン モードを有効にします。",
+            "C": "Azure Automation と Logic Apps を使用して、セッション ホスト VM をスケーリングします。",
+            "D": "Azure Monitor 自動スケーリングを使用して、セッション ホスト VM の数を調整します。"
+        },
+        "correct_answer": ["A"],
+        "explanation": "ユーザーの需要に基づいてセッション ホスト VM のスケーリングを自動化するには、自動スケーリングのルールを定義し、コストを最適化するためにスケーリング計画を作成して割り当てる必要があります。Azure Automation と Logic Apps を使用すると、特定のタスクを自動化できますが、Azure Virtual Desktop でのスケーリングは直接自動化されません。セッション ホスト ドレイン モードを有効にすると、メンテナンスはできますが、スケーリングは自動化されません。Azure Monitor 自動スケーリングの使用はよく誤解されますが、Azure Virtual Desktop のスケーリングは直接サポートされていません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/create-configure-host-pools-session-hosts/6-create-host-pool-azure-portal",
+            "https://learn.microsoft.com/training/modules/monitor-manage-performance-health/6-implement-scaling-plans-host-pools"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ライセンス管理",
+        "question": "会社では、Microsoft Azure Resource Manager テンプレートを使用して Microsoft Azure Virtual Desktop ホスト プールの作成を自動化します。ただし、一部のセッション ホスト VM では、想定される Windows ライセンスの種類が表示されません。すべてのセッション ホスト VM に正しい Windows ライセンスが適用されていることを確認する必要があります。どのアクションを実行する必要がありますか?",
+        "options": {
+            "A": "影響を受ける VM に PowerShell を使用する Windows_Client ライセンスを適用します。",
+            "B": "この問題を解決するには、Microsoft サポートにお問い合わせください。",
+            "C": "Azure CLI を使用して、セッション ホスト VM に Windows ライセンスを適用します。",
+            "D": "ライセンス アプリケーションの Microsoft Azure Resource Manager テンプレート構成を確認します。"
+        },
+        "correct_answer": ["A", "D"],
+        "explanation": "PowerShell を使用して Windows_Client ライセンスを適用すると、ライセンスが正しく付与されるように特定の仮想マシンでライセンスが不足する問題に直接対処します。Microsoft Azure Resource Manager テンプレートの構成を確認すると、将来のデプロイが正しく構成されるようにライセンス アプリケーション プロセスの省略やエラーを識別できます。Azure CLI の使用はライセンスを適用するための有効な方法ではなく、この問題について Microsoft サポートに問い合わせる必要はありません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/create-configure-host-pools-session-hosts/5-manage-license-for-session-hosts-run-windows-client",
+            "https://learn.microsoft.com/training/modules/create-manage-session-host-image/6-manage-license-session-hosts-run-windows-client"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - イメージ管理",
+        "question": "異なるリージョンにわたって複数の Azure 仮想マシンが含まれる Azure Virtual Desktop インフラストラクチャを所有しています。Windows 11 イメージを作成します。イメージを格納し、次の要件を満たす Azure サービスを推奨する必要があります。• イメージのバージョン管理をサポートします。• インフラストラクチャ内のすべてのリージョンからアクセスできます。• 冗長ストレージを提供します。何を推奨すればよいですか?",
+        "options": {
+            "A": "Azure バックアップ",
+            "B": "Azure Compute Gallery（アジュール コンピュート ギャラリー）",
+            "C": "Azure コンテンツ配信ネットワーク (CDN)",
+            "D": "Azure NetApp ファイルズ"
+        },
+        "correct_answer": ["B"],
+        "explanation": "Azure Compute Gallery が正解です。このサービスでは、冗長ストレージと複数のコピーを備えたホスト プールがデプロイされているすべてのリージョンでイメージをレプリケートできます。Azure Backup は、主にバックアップとディザスター リカバリーを目的として設計されているため、不正解です。Azure Backup を使用して仮想マシンをバックアップする場合は、最新のバックアップのみを復元できます。つまり、以前のバージョンのイメージが必要な場合に、それにロールバックできない可能性があります。Azure CDN は不正解です。コンテンツ配信ネットワーク (CDN) は、ユーザーに Web コンテンツを配信するために使用するサーバーの分散ネットワークです。Azure NetApp Files は不正解です。このサービスは、特にイメージの管理用に設計されたものではなく、Azure Compute Gallery と同レベルでイメージ バージョンを制御することはできません。",
+        "references": [
+            "https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/wvd/eslz-business-continuity-and-disaster-recovery"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - イメージ作成",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。Windows 11 Enterprise マルチセッションを実行し、次のタスクを実行する、VM1 という名前の仮想マシンを作成します。• 最新の Windows 更新プログラムをインストールします。• 不要なユーザー プロファイルを削除する。• 一時ファイルをクリーンアップする。すべての新しい Azure Virtual Desktop セッション ホストのイメージとして VM1 がキャプチャできるようにする必要があります。VM1 ではどのコマンドを実行すればよいでしょうか?",
+        "options": {
+            "A": "credentialEnrollmentManager.exe",
+            "B": "desktopimgdownldr.exe",
+            "C": "dism.exe",
+            "D": "sysprep.exe"
+        },
+        "correct_answer": ["D"],
+        "explanation": "イメージのキャプチャ用に仮想マシンを準備するには、まず仮想マシンで sysprep を実行してから、仮想マシンをシャットダウンする必要があります。Sysprep は、コンピューター名や SID などのシステム固有のデータを削除して、イメージ化用に仮想マシンを準備します。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/set-up-golden-image#capture-the-vm"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - イメージビルダー",
+        "question": "Azure サブスクリプションがある。サブスクリプションには、Windows Server を実行する仮想マシンが含まれています。Azure VM Image Builder を使用して、Azure Virtual Desktop インフラストラクチャの仮想マシンのイメージを作成する必要があります。どの PowerShell コマンドレットを実行すればよいでしょうか?",
+        "options": {
+            "A": "New-AzImageConfig",
+            "B": "New-AzResourceGroupDeployment",
+            "C": "Set-AzVMCustomScriptExtension",
+            "D": "Start-AzImageBuilderTemplate",
+            "E": "Update-AzVMImage"
+        },
+        "correct_answer": ["D"],
+        "explanation": "Start-AzImageBuilderTemplate は、Azure 仮想マシン イメージ テンプレートの作成に使用されるコマンドレットです。その他のコマンドレットは、その他のイメージ ソースのデプロイ、カスタマイズ、デプロイ、管理に使用します。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-machines/windows/image-builder-powershell#start-the-image-build"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - イメージ管理",
+        "question": "Windows Server を実行するオンプレミス サーバーがあり、Hyper-V サーバー ロールがインストールされています。Hyper-V から、Windows 11 Enterprise を実行する Image1 という名前の仮想マシンを作成します。Pool1 という名前の Azure Virtual Desktop ホスト プールを作成し、Pool1 のセッション ホストのイメージとして Image1 を使用する予定です。Azure に Image1 をアップロードする必要があります。このソリューションでは、アップロード時間を最小限に抑える必要があります。仮想マシンを Azure にアップロードする前に、Image1 に対してどのディスク形式を構成すればよいでしょうか?",
+        "options": {
+            "A": "VHD 動的",
+            "B": "VHD 固定",
+            "C": "VHDX 差分",
+            "D": "VHDX 動的"
+        },
+        "correct_answer": ["B"],
+        "explanation": "Azure Virtual Desktop セッション ホスト仮想マシンでは、VHD 形式の固定ディスクを使用する必要があります。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/create-manage-session-host-image/2-create-managed-virtual-machine-image"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - イメージビルダー",
+        "question": "Azure VM Image Builder と Azure PowerShell を使用して、新しい Azure Virtual Desktop イメージを作成する予定です。Azure サブスクリプションで Microsoft.VirtualMachineImages プロバイダーが有効になっていることを検証する必要があります。どの PowerShell コマンドレットを実行すればよいでしょうか?",
+        "options": {
+            "A": "Get-AzProviderFeature",
+            "B": "Get-AzProviderOperation",
+            "C": "Get-AzResourceProvider",
+            "D": "Register-AzProviderFeature"
+        },
+        "correct_answer": ["C"],
+        "explanation": "Get-AzResourceProvider は、プロバイダーが登録されているかどうかを検証するために使用できる PowerShell コマンドレットです。この場合は、Microsoft.VirtualMachineImages -ProviderNamespace VirtualMachineTemplatePreview Get-AzProviderFeature -FeatureName。その他のコマンドレットでは、リソース プロバイダーが登録されているかどうかは検証しません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/create-manage-session-host-image/6-create-azure-virtual-desktop-image-image-builder",
+            "https://learn.microsoft.com/azure/virtual-machines/windows/image-builder-virtual-desktop"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - セキュリティ",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。あなたは、アンマネージド デバイスが Azure Virtual Desktop に接続するときに、多要素認証 (MFA) が求められないようにする条件付きアクセス ポリシーを作成する必要があります。このポリシーでは、どのアプリを対象にすればよいでしょうか?",
+        "options": {
+            "A": "Azure App Service サインイン",
+            "B": "Azure Virtual Desktop",
+            "C": "Azure Windows VM サインイン",
+            "D": "Windows 365"
+        },
+        "correct_answer": ["C"],
+        "explanation": "Azure Windows VM のサインインが正解です。Microsoft Entra テナントに登録されていないデバイスを管理する場合、MFA を必要とするクラウド アプリの一覧から Azure Windows VM サインイン アプリを除外する条件付きアクセス ポリシーを構成できます。これにより、ユーザーは、追加の認証要素を必要とせずに、自分の Microsoft Entra 資格情報と RDP または類似のプロトコルのみを使用して認証することができます。Azure Virtual Desktop は不正解です。従来の形式の MFA は、Web ポータルまたはリモート デスクトップ アプリケーションにサインインするときに機能するため、このアプリは除外する必要がありません。Azure App Service サインインは不正解です。このアプリは、Azure で Web およびモバイル アプリを構築してデプロイできるサービス オファリングを指します。Windows 365 は不正解です。このアプリは、Windows 10 または Windows 11 のデスクトップとアプリケーションを任意のデバイスにストリーミングできるクラウドベースのサービスです。",
+        "references": [
+            "https://learn.microsoft.com/azure/active-directory/devices/howto-vm-sign-in-azure-ad-windows#mfa-sign-in-method-required"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - アクセス管理",
+        "question": "あなたは、RG1 という名前のリソース グループを含む Azure サブスクリプションを所有しています。RG1 には、次のリソースを含む Azure Virtual Desktop のインフラストラクチャが含まれています。• HostPool1:Azure Virtual Desktop ホスト プール • Host1:Azure Virtual Desktop セッション ホスト • Pool1-DAG:Pool1 用のデスクトップ アプリケーション グループ Admin1 という名前のユーザーは次のタスクを実行する必要があります。• Pool1-DAG のアプリケーションにアクセスする。• アプリケーション グループをユーザーに公開する。Admin1 に必要な管理ロールを特定する必要があります。解答では、最小限の特権の原則に従う必要があります。どの 2 つのロールを識別する必要がありますか?",
+        "options": {
+            "A": "デスクトップ仮想化閲覧者",
+            "B": "デスクトップ仮想化ユーザー",
+            "C": "リソース グループの共同作成者",
+            "D": "ユーザーアクセス管理者",
+            "E": "仮想マシン共同作成者"
+        },
+        "correct_answer": ["B", "D"],
+        "explanation": "デスクトップ仮想化ユーザーが正解です。このロールでは、ユーザーはアプリケーション グループ内のアプリケーションを使用できます。ユーザー アクセス管理者が正解です。アプリケーション グループをユーザーまたはユーザー グループに公開する場合は、ユーザー アクセス管理者ロールが必要です。仮想マシンの共同作業者は不正解です。このロールは、仮想マシンとそれに関連付けられているリソースを管理するアクセス許可を提供します。デスクトップ仮想化閲覧者は不正解です。このロールは、ホスト プール、セッション ホスト、アプリケーション グループなどの Azure Virtual Desktop リソースへの読み取り専用アクセスを提供しますが、これらのリソースの管理または公開に必要なアクセス許可は提供しません。リソース グループの共同作成者は不正解です。このロールは、特定のリソース グループ内のすべてのリソースを管理するアクセス許可を提供しますが、ホスト プール、セッション ホスト、アプリケーション グループなど、Azure Virtual Desktop のリソースの管理に必要なアクセス許可は提供しません。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/rbac#desktop-virtualization-contributor"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - セキュリティ",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。次の要件を満たすセキュリティ ソリューションを推奨する必要があります。• Advanced Threat Protection を提供する • 脆弱性を管理できる • クラウド セキュリティ体制管理をサポートする 何を推奨すればよいですか?",
+        "options": {
+            "A": "Microsoft Defender for Cloud",
+            "B": "Microsoft Defender for CSPM",
+            "C": "Microsoft Defender for DevOps",
+            "D": "Microsoft Defender for Endpoint（エンドポイント用マイクロソフトディフェンダー）",
+            "E": "Microsoft Defender for External Attack Surface Management"
+        },
+        "correct_answer": ["A"],
+        "explanation": "Defender for Cloud は、高度な脅威保護、脆弱性管理、クラウドのセキュリティ体制の管理など、セキュリティの特定の側面に対処します。",
+        "references": [
+            "https://learn.microsoft.com/azure/defender-for-cloud/defender-for-cloud-introduction"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - セキュリティ",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。セッション ホストへの管理アクセスをセキュリティで保護する必要があります。このソリューションでは、次の要件を満たす必要があります。• インターネットからの RDP および SSH トラフィックをブロックする必要があります。• セッション ホストには、プライベート IP アドレスのみを割り当ることができるようにする必要があります。• 管理者は、Azure portal または Azure CLI を使ってセッション ホストにアクセスする必要があります。何を構成する必要がありますか?",
+        "options": {
+            "A": "Azure Bastion",
+            "B": "VM に対する Azure Monitor",
+            "C": "Microsoft Defender for Cloud",
+            "D": "Microsoft Sentinel"
+        },
+        "correct_answer": ["A"],
+        "explanation": "Azure Bastion は、HTTPS を使用し、承認の第 1 選択肢として Microsoft Entra ID を要求し、RDP と SSH との接続が可能になります。Defender for Cloud は、さまざまな推奨事項を視覚化できるポータルです。Microsoft Sentinel は、RDP アクセスを提供しない SIEM/SOAR ソリューションです。Azure Monitor for VMs は、拡張機能を使用して情報を取得し、仮想マシン上でアクションを実行しますが、RDP アクセスは実装しません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/6-configure-azure-virtual-desktop-session-hosts-using-azure-bastion",
+            "https://learn.microsoft.com/azure/bastion/bastion-overview"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ネットワークセキュリティ",
+        "question": "Pool1 という名前の Azure Virtual Desktop ホスト プールを実装する予定です。Pool1 には、10 のセッション ホストを含めます。このセッション ホストへのネットワーク アクセス制御の実装には、Azure Firewall を使用する必要があります。このソリューションでは、管理作業を最小限に抑える必要があります。どの Azure Firewall 機能を使用すればよいでしょうか?",
+        "options": {
+            "A": "NAT 規則",
+            "B": "ネットワーク ルール",
+            "C": "アプリケーション ルール",
+            "D": "インフラストラクチャ ルール"
+        },
+        "correct_answer": ["C"],
+        "explanation": "セッション ホストのネットワーク アクセスの制御に Azure Firewall を使用するには、アプリケーション ルールのコレクションを作成し、WindowsVirtualDesktop FQDN タグを有効にするルールを追加する必要があります。発信元 IP アドレスの範囲はホスト プールの仮想ネットワークで、プロトコルは https、宛先は WindowsVirtualDesktop です。NAT 規則は、送信ではなく受信トラフィックを制御します。インフラストラクチャ ルールは、Azure インフラストラクチャ サービスにのみ適用されます。このシナリオでネットワーク ルールが使用される可能性もありますが、より多くの実装とメンテナンス作業が必要です。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/5-implement-manage-network-security"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - セキュリティ",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。次のアクセス要件を満たすよう、セッション ホスト仮想マシンのセットをセキュリティで保護する必要があります。• ファイアウォール ポートへは、セッション ホストへのアクセスが承認された後でのみ有効にする必要があります。• 仮想マシンへは、各セッションで最大 4 時間しかアクセスできないようにする必要があります。何を構成する必要がありますか?",
+        "options": {
+            "A": "自動スケール",
+            "B": "条件付きアクセス",
+            "C": "Just-In-Time (JIT) VM アクセス",
+            "D": "RDP ショートパス"
+        },
+        "correct_answer": ["C"],
+        "explanation": "JIT VM アクセスは、Azure 仮想マシン セッション ホストにセキュリティで保護されたアクセスを提供するように構成できます。ユーザーがセッション ホスト仮想マシンへのアクセスを要求すると、ロールベースのアクセス制御 (RBAC) アクセス許可が検証されます。要求が承認されると、JIT の構成設定で指定された時間、選択したポートへの受信トラフィックが有効になります。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/manage-security/6-security-posture-management-threat-protection",
+            "https://learn.microsoft.com/azure/defender-for-cloud/just-in-time-access-overview?tabs=defender-for-container-arch-aks"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ネットワーキング",
+        "question": "5 つのセッション ホスト仮想マシンを含む Azure Virtual Desktop ホスト プールを所有しています。仮想マシンへの接続のために Azure Bastion をデプロイする予定です。最初に何を作成する必要がありますか?",
+        "options": {
+            "A": "新しいアプリケーション グループ",
+            "B": "AzureBastionSubnet という名前の新しいサブネット",
+            "C": "AzureFirewallSubnet という名前の新しいサブネット",
+            "D": "ネットワーク セキュリティ グループ (NSG) の受信トラフィック ルール"
+        },
+        "correct_answer": ["B"],
+        "explanation": "Azure Bastion のデプロイには AzureBastionSubnet という名前のサブネットが必要です。新しいアプリケーション グループは、Azure Bastion のデプロイとは関連性がありません。受信 NSG 規則は必要ありません。Azure Firewall の実装には、Azure Bastion ではなく AzureFirewallSubnet が必要です。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-networking-azure-virtual-desktop/6-configure-azure-virtual-desktop-session-hosts-using-azure-bastion"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - セキュリティ",
+        "question": "あなたは、RG1 という名前のリソース グループを含む Azure サブスクリプションを所有しています。RG1 には、次のリソースを含む Azure Virtual Desktop のインフラストラクチャが含まれています。• HostPool1:Azure Virtual Desktop ホスト プール • Host1:Azure Virtual Desktop セッション ホスト • Host2:Azure Virtual Desktop セッション ホスト HostPool1 のすべてのセッション ホストに対し、既定の設定で Microsoft Defender ウイルス対策を構成する必要があります。HostPool1 に新しく作成したセッション ホストに、Microsoft Defender ウイルス対策が自動的に構成される必要があります。ソリューションのデプロイには何を使用すればよいでしょうか?",
+        "options": {
+            "A": "Azure Policy",
+            "B": "拡張機能",
+            "C": "Microsoft Defender for Cloud",
+            "D": "Microsoft Intune"
+        },
+        "correct_answer": ["D"],
+        "explanation": "Microsoft Intune が正解です。Microsoft Defender ウイルス対策を、既存のセッション ホストと新しいセッション ホストの両方に対して構成するには、Intune のデバイス構成プロファイルをデバイス グループ HostPool1 を対象として使用します。これにより、新しく作成されたすべてのセッション ホストに対し、すべての適切なウイルス対策設定が構成されます。Azure Policy は不正解です。このサービスでは、リソースのためのルールを評価して適用して、組織の標準とコンプライアンスを適用することができます。Defender for Cloud は不正解です。これはデバイスの保護に使用できますが、Azure Virtual Desktop ホスト プール内のセッション ホストに Microsoft Defender ウイルス対策を構成するために特別に設計されているわけではありません。拡張機能は不正解です。拡張機能を使用して Microsoft Defender ウイルス対策をデプロイすることはできますが、これは個々の仮想マシンのレイヤーでのみ行うことができます。拡張機能はホスト プールで構成することはできません。",
+        "references": [
+            "https://learn.microsoft.com/mem/intune/fundamentals/azure-virtual-desktop-multi-session"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - セキュリティ",
+        "question": "Microsoft Azure Virtual Desktop をデプロイして従業員のアプリケーションへのリモート アクセスが提供される組織で作業しています。IT チームは、セッション ホストに対する潜在的なセキュリティ上の脅威を懸念しています。不要なソフトウェアがセッション ホスト上で実行されないようにし、マルウェアから保護するソリューションを実装する必要があります。どのようなアクションを取る必要がありますか?",
+        "options": {
+            "A": "AppLocker を有効にし、セッション ホストで Defender ウイルス対策を構成します。",
+            "B": "脅威に対する保護のために Azure Security Center を実装します。",
+            "C": "ネットワーク セキュリティ グループを使用する受信トラフィックと送信トラフィックを制限します。",
+            "D": "Azure Policy を使用して、セッション ホストにセキュリティ構成を適用します。"
+        },
+        "correct_answer": ["A"],
+        "explanation": "AppLocker を有効にし、セッション ホストで Defender ウイルス対策を構成すると、未承認のソフトウェアの実行を防ぎ、マルウェアから保護する必要性に直接対処します。Azure Policy を使用してセキュリティ構成を適用すると、コンプライアンスの管理に役立ちますが、不要なソフトウェアの実行を防いだり、マルウェアからの保護を提供したりすることはありません。ネットワーク セキュリティ グループを使用した受信トラフィックと送信トラフィックを制限すると、ネットワーク トラフィックが制御されますが、セッション ホストでの不要なソフトウェアの実行を防いだり、マルウェア保護を提供したりすることはありません。Azure Security Center を実装すると、脅威に対する保護に関する分析情報が得られますが、不要なソフトウェアの実行やマルウェアからの保護を直接防ぐことはありません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/manage-security/2-security-recommendations-azure-virtual-desktop",
+            "https://learn.microsoft.com/training/modules/manage-access/4-role-based-access-control-virtual-desktop"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - モニタリング",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。Log Analytics を構成し、セッション ホストからログを収集して分析できるようにします。ユーザーのクライアント デバイスの IP アドレスとオペレーティング システムの種類を識別するクエリを作成する必要があります。このクエリにはどのテーブルを含めればよいでしょうか?",
+        "options": {
+            "A": "WVDチェックポイント",
+            "B": "WVDConnections",
+            "C": "WVDHostRegistrations (WVDホスト登録)",
+            "D": "WVDセッションホスト管理"
+        },
+        "correct_answer": ["B"],
+        "explanation": "WVDConnections が正解です。この表には、クライアント デバイスと Azure Virtual Desktop のセッション ホスト間の接続に関する情報が含まれています。WVDcheckpoints には、ユーザー セッションまたはホスト プールに関する情報は含まれていません。WVDcheckpoints テーブルは、ユーザーが Azure Virtual Desktop で開いたすべての公開済みアプリを追跡します。WVDHostRegistrations には、Windows Virtual Desktop サービスを使用したセッション ホストの登録状態に関する情報が含まれています。WVDSessionHostManagement には、更新方法、状態、関連付け ID など、ホスト プールの更新操作に関する情報が含まれています。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/diagnostics-log-analytics",
+            "https://learn.microsoft.com/azure/azure-monitor/reference/tables/wvdconnections"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - モニタリング",
+        "question": "あなたは、Pool1 という名前の Azure Virtual Desktop ホスト プールを監視しています。Pool1 のユーザーに影響を与えている低品質のフレームの問題のトラブルシューティングを、パフォーマンス モニターを使用して行う予定です。Pool1 のセッション ホストでリモート セッション名を取得する必要があります。何を使用する必要がありますか?",
+        "options": {
+            "A": "Azure Advisor",
+            "B": "Azure Site Recovery (アジュールサイトリカバリー)",
+            "C": "Log Analytics ワークスペース",
+            "D": "qwinsta コマンド"
+        },
+        "correct_answer": ["D"],
+        "explanation": "qwinsta コマンドを使用すると、マルチセッション仮想マシン ホスト セッションでセッション名を検索できます。Azure Site Recovery は、Azure サイトまたはリージョンの障害から保護することができます。Azure Monitor を監視ツールとして使用するとき、診断設定の送信に、Log Analytics ワークスペースが必要です。Azure Advisor では、構成と分析情報を分析し、その後 Azure Virtual Desktop の環境に推奨事項を提供するために使用できます。",
+        "references": [
+            "https://learn.microsoft.com/training/paths/monitor-maintain-azure-virtual-desktop-infrastructure/",
+            "https://learn.microsoft.com/training/modules/monitor-manage-performance-health/6-diagnose-graphics-performance-issues"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - 自動スケーリング",
+        "question": "あなたは、RG1 という名前のリソース グループを含む Azure サブスクリプションを所有しています。RG1 には、次のリソースを含む Azure Virtual Desktop のインフラストラクチャが含まれています。• Pool1:プールされたホスト プール • Host1:Pool1 内のセッション ホスト • Host2:Pool1 内のセッション ホスト • Pool1 DAG: Pool1 用のデスクトップ アプリケーション グループ 自動スケールを有効にする必要があります。スケーリング プランを作成する必要があるリソースはどれですか?",
+        "options": {
+            "A": "Host1 と Host2 のみ",
+            "B": "Pool1-DAG のみ",
+            "C": "RG1 のみ",
+            "D": "Pool1 のみ"
+        },
+        "correct_answer": ["D"],
+        "explanation": "Pool1 が正解です。Pool1 は、複数のセッション ホストを含むプールされたホスト プールです。Pool1 に自動スケーリングを構成すると、このプール内のセッション ホストは要求に応じて自動的にスケール アップまたはダウンされ、インフラストラクチャのパフォーマンスとコストを削減できます。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/autoscale-scaling-plan"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - モニタリング",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。セッション ホストのパフォーマンスと使用状況に基づいてアラートを生成する必要があります。何を構成する必要がありますか?",
+        "options": {
+            "A": "スケーリング プラン",
+            "B": "タグ",
+            "C": "Azure Virtual Desktop の分析情報",
+            "D": "Microsoft Sentinel"
+        },
+        "correct_answer": ["C"],
+        "explanation": "Azure Monitor と Azure Virtual Desktop Insights を共に使用すると、ホスト プールと個々のセッション ホストの両方のパフォーマンスと使用状況を監視できます。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/insights"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - メンテナンス",
+        "question": "ホスト プールを含む Azure Virtual Desktop のインフラストラクチャを所有しています。このホスト プールには、25 のセッション ホストが含まれています。Azure Virtual Desktop エージェントを更新する必要があります。どうすればよいでしょうか?",
+        "options": {
+            "A": "スケーリング プランを構成します。",
+            "B": "診断設定を構成します。",
+            "C": "ドレイン モードを有効にします。",
+            "D": "スケジュール化されたエージェントの更新を有効にします。"
+        },
+        "correct_answer": ["D"],
+        "explanation": "スケジュール化されたエージェントの更新では、Azure Virtual Desktop エージェント、サイドバイサイド スタック、Geneva Monitoring エージェント用にメンテナン期間を最大 2 つ作成して、営業のピークの時間に更新が行われないようにすることができます。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/scheduled-agent-updates"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ディザスタリカバリ",
+        "question": "米国東部 Azure リージョンに 6 つのセッション ホストがある Azure Virtual Desktop インフラストラクチャを実装する予定です。ホストの各ペアは、異なる可用性ゾーンに属すことになります。Azure Site Recovery を使用して、地域的な障害が発生した場合にアプリケーションが使用できるようになるまでの時間を最小限に抑る必要があります。作成する必要があるホスト プールの最小数はいくつですか?",
+        "options": {
+            "A": "1",
+            "B": "2",
+            "C": "3",
+            "D": "6"
+        },
+        "correct_answer": ["A"],
+        "explanation": "Azure Site Recovery を使用すると、個人用とプールされたホスト プールの両方のすべての VM を構成できます。この方法では、1 つのホスト プールとそれに関連するアプリ グループおよびワークスペースのみを設定する必要があります。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/plan-implement-business-continuity-disaster-recovery/3-virtual-machine-replication"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ディザスタリカバリ",
+        "question": "複数のリージョンに Azure Virtual Desktop をデプロイしました。各リージョンにはホスト プールがあり、ユーザー プロファイルは、クラウド キャッシュが有効になっている FSLogix を使用して格納されます。プロファイルの競合が発生しないように、リージョンの停止中にユーザー プロファイルの一貫性を保持し、アクセス可能にする必要があります。どうすればよいでしょうか?",
+        "options": {
+            "A": "両方のホスト プールへの同時アクセスを回避するために FSLogix を構成します。",
+            "B": "プロファイル同期のために FSLogix クラウド キャッシュを有効にします。",
+            "C": "FSLogix プロファイル リダイレクトを有効にします。",
+            "D": "FSLogix でプロファイル コンテナー暗号化を有効にします。"
+        },
+        "correct_answer": ["A"],
+        "explanation": "ユーザーが両方のホスト プールに同時にアクセスできないようにする FSLogix の構成は、プロファイルの競合を回避し、リージョンの停止中に一貫性を確保するための正しいアプローチです。プロファイル同期に FSLogix クラウド キャッシュを有効にしても、同時アクセスを回避する必要性には対処されず、Azure Site Recovery の使用は、プロファイルの競合の解決ではなく、セッション ホストに重点を置いています。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/plan-implement-business-continuity-disaster-recovery/2-disaster-recovery-for-azure-virtual-desktop",
+            "https://learn.microsoft.com/training/modules/manage-security/2-security-recommendations-azure-virtual-desktop"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ディザスタリカバリ",
+        "question": "組織では、複数のリージョンにまたがる従業員のリモート作業をサポートするために Microsoft Azure Virtual Desktop をデプロイします。現在のセットアップには、セッション ホスト仮想マシン、プロファイル管理用の FSLogix、ユーザー データ ストレージ用の Microsoft Azure Files が含まれます。ビジネス継続性に影響を与える潜在的なリージョンの停止に関する懸念事項があります。高可用性を確保し、リージョンの停止中のダウンタイムを最小限に抑えるディザスター リカバリー計画を設計する必要があります。どのアクションを実行する必要がありますか?",
+        "options": {
+            "A": "FSLogix プロファイル向けの Azure Backup を geo 冗長ストレージ アカウントに構成します。",
+            "B": "セッション ホストを複数の Azure リージョンに分散します。",
+            "C": "Azure Site Recovery を実装して、セッション ホストをセカンダリ リージョンにレプリケートします。",
+            "D": "セッション ホストに Azure 可用性セットを使用します。",
+            "E": "Azure Load Balancer を使用して、セッション ホスト間でトラフィックを分散します。"
+        },
+        "correct_answer": ["B", "C"],
+        "explanation": "セッション ホストの複数の Azure リージョンへの分散とセッション ホストをセカンダリ リージョンにレプリケートするための Azure Site Recovery の実装は、高可用性を確保し、リージョンの停止中のダウンタイムを最小限に抑えるための効果的な戦略です。セッション ホストを分散すると地理的な冗長性が提供されますが、Azure Site Recovery ではレプリケーション機能が提供されます。FSLogix プロファイル向けの Azure Backup を geo 冗長ストレージ アカウントに構成することは有益に見える場合がありますが、リージョンの停止中の即時フェールオーバーのニーズには対処されません。Azure Availability Sets の使用は、ディザスター リカバリーではなく単一リージョン内の高可用性に重点を置いており、Azure Load Balancer を使用するとトラフィックの分散が最適化されますが、ディザスター リカバリーには対処されません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/plan-implement-business-continuity-disaster-recovery/2-disaster-recovery-for-azure-virtual-desktop",
+            "https://learn.microsoft.com/training/modules/create-configure-host-pools-session-hosts/3-operating-systems-azure-regions"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - FSLogix",
+        "question": "10 のセッション ホストを含む Azure Virtual Desktop のインフラストラクチャを所有しています。すべてのセッション ホストには、FSLogix がインストールされています。あなたは、storage1 という名前の Azure ページ BLOB ストレージ アカウントを作成します。プロファイル情報の格納に storage1 を使用するように FSLogix を構成する必要があります。どのレジストリ設定を使用すればよいでしょうか?",
+        "options": {
+            "A": "CCDLocations",
+            "B": "ProfileDirSDDL",
+            "C": "RedirXMLSourceFolder",
+            "D": "VHDLocations"
+        },
+        "correct_answer": ["A"],
+        "explanation": "Azure ページ BLOB ストレージ アカウントがあり、FSLogix で使用する場合、唯一の選択肢はクラウド キャッシュを実装することです。FSLogix クラウド キャッシュでは、CCDLocations のレジストリ構成が必要です。VHDLocations は、SMB ベースのファイル共有を使用してユーザー プロファイルを格納するときに使用します。",
+        "references": [
+            "https://learn.microsoft.com/fslogix/concepts-fslogix-cloud-cache",
+            "https://learn.microsoft.com/fslogix/concepts-container-storage-options",
+            "https://learn.microsoft.com/fslogix/configure-cloud-cache-tutorial"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - FSLogix",
+        "question": "Pool1 という名前の 10 のセッション ホストを含む Azure Virtual Desktop ホスト プールを所有しています。Pool1 のセッション ホストに接続するユーザーに、FSLogix Office コンテナー プロファイルを実装する予定です。FSLogix のユーザー プロファイルの場所を指定する設定を構成する必要があります。何を構成する必要がありますか?",
+        "options": {
+            "A": "Azure portal でのホスト プール設定",
+            "B": "各セッション ホスト上のローカル構成ファイル",
+            "C": "各セッション ホストのレジストリ設定",
+            "D": "Azure portal のセッション ホスト設定"
+        },
+        "correct_answer": ["C"],
+        "explanation": "Office Container の構成は、レジストリ設定とユーザー グループによって行います。プロファイル コンテナーの構成設定は、HKLM\\SOFTWARE\\Policies\\FSLogix\\ODFC に設定します。これらの設定には、ユーザーのプロファイル VHD(X) ファイルを検索するファイル システムの場所の一覧を指定する VHDLocations レジストリ エントリが含まれます。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/implement-manage-fslogix/7-configure-office-containers"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - FSLogix",
+        "question": "FSLogix プロファイル コンテナーを使用する Azure Virtual Desktop のインフラストラクチャを所有しています。ユーザーの FSLogix プロファイル コンテナーから、連絡先、リンク、および音楽フォルダーを除外する必要があります。この除外の指定は、どのファイルに構成すればよいでしょうか?",
+        "options": {
+            "A": "Configuration.xml",
+            "B": "MigApp.xml",
+            "C": "MigUser.xml",
+            "D": "Redirections.xml"
+        },
+        "correct_answer": ["D"],
+        "explanation": "ユーザーのプロファイル コンテナー内のファイルまたはフォルダーを除外するには、Redirections.xml という名前のファイルを作成する必要があります。このファイルは、ユーザーのプロファイル コンテナーからコピーするまたは除外する対象を定義します。この XML ファイルは、ユーザーが仮想マシンにサインインおよびサインアウトする際に処理されます。",
+        "references": [
+            "https://learn.microsoft.com/fslogix/concepts-redirections-xml",
+            "https://learn.microsoft.com/fslogix/tutorial-redirections-xml"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - ユーザー設定",
+        "question": "Pool1 という名前の 10 のセッション ホストを含む Azure Virtual Desktop ホスト プールを所有しています。仮想デスクトップ インフラストラクチャ (VDI) を使用するために Pool1 のセッション ホストを最適化するために、グループ ポリシー設定を有効にする必要があります。どの設定を有効にする必要がありますか?",
+        "options": {
+            "A": "オフライン ファイル機能の使用を許可します。",
+            "B": "BITS クライアントが Windows ブランチ キャッシュを使用しないにようにします。",
+            "C": "ホットスポット認証を有効にします。",
+            "D": "BranchCache を有効にします。"
+        },
+        "correct_answer": ["B"],
+        "explanation": "有効にする必要があるのは、BITS クライアントでの Windows ブランチ キャッシュの使用を許可しない設定のみです。その他は無効にする必要があります。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/configure-user-experience-settings/4-configure-user-settings-through-group-policies"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - デバイスリダイレクト",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。ユーザーは、次のリモート デスクトップ クライアントを組み合わせて使用し、このインフラストラクチャに接続します。• Windows 用 Azure Virtual Desktop Store アプリ • macOS 用リモート デスクトップ クライアント • リモート デスクトップ Web クライアント 3 種類のすべてのクライアントのみをサポートするよう、デバイスのリダイレクトを構成する必要があります。どの 2 つのデバイスをリダイレクトすればよいでしょうか?",
+        "options": {
+            "A": "カメラ",
+            "B": "クリップボード",
+            "C": "ロケーション",
+            "D": "スキャナー",
+            "E": "USB ポート"
+        },
+        "correct_answer": ["A", "B"],
+        "explanation": "カメラとクリップボードは、3 種類のクライアントすべてに対してリダイレクトできます。USB ポート、スキャナー、および場所は、Windows クライアント用の Azure Virtual Desktop Store アプリでのみサポートされます。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/compare-remote-desktop-clients#other-redirection-devices-etc",
+            "https://learn.microsoft.com/azure/virtual-desktop/configure-device-redirections"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - 印刷",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。クライアントは、プロキシ サーバーを使用して Azure Virtual Desktop セッション ホストにアクセスします。あなたは、ユーザーが Windows 11 クライアント コンピューターからユニバーサル印刷を使用できるようにする必要があります。プロキシ構成を設定するには、何を実行すればよいでしょうか?",
+        "options": {
+            "A": "bitsadmin",
+            "B": "Connect-UPService",
+            "C": "New-UPPrinterShare",
+            "D": "Set-UPConnectorProperty"
+        },
+        "correct_answer": ["A"],
+        "explanation": "プロキシ サーバーを使用してインターネットにアクセスする場合は、bitsadmin コマンドを実行して、ローカル システム アカウントのプロキシ構成を設定する必要があります。残りは有効な PowerShell コマンドレットですが、ローカル システムのプロキシの構成には役立ちません。",
+        "references": [
+            "https://learn.microsoft.com/universal-print/fundamentals/universal-print-avd",
+            "https://learn.microsoft.com/universal-print/fundamentals/universal-print-connector-installation"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - 仮想マシン機能",
+        "question": "あなたは、RG1 という名前のリソース グループを含む Azure サブスクリプションを所有しています。RG1 には、次のリソースを含む Azure Virtual Desktop のインフラストラクチャが含まれています。• Pool1:ホスト プール • Host1:Pool1 内のセッション ホスト • Pool1-DAG:Pool1 用のデスクトップ アプリケーション グループ 接続時に仮想マシンを起動機能を構成する必要があります。この機能は、どのリソースから構成すればよいでしょうか?",
+        "options": {
+            "A": "Host1",
+            "B": "Pool1",
+            "C": "Pool1-DAG",
+            "D": "RG1"
+        },
+        "correct_answer": ["B"],
+        "explanation": "Pool1 が正解です。Start VM on Connect 機能を使用するには、ホスト プールで有効にする必要があります。RG1 は不正解です。リソース グループは、Azure にデプロイされるリソースの論理コンテナーです。Host1 は不正解です。セッション ホストは、Azure Virtual Desktop のユーザー セッションを 1 つ以上ホストする仮想マシンです。Pool-DAG は不正解です。デスクトップ アプリケーション グループは、ユーザーがアクセスできる RemoteApp プログラムとデスクトップのコレクションです。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/start-virtual-machine-connect?tabs=azure-portal"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - デバイスリダイレクト",
+        "question": "Pool1 という名前の 10 のセッション ホストを含む Azure Virtual Desktop ホスト プールを所有しています。Pool1 に接続しているユーザーに対して USB デバイス リダイレクトを有効にする必要があります。何を構成する必要がありますか?",
+        "options": {
+            "A": "各セッション ホストのみのグループ ポリシー設定",
+            "B": "ユーザーのデバイスのみのグループ ポリシー設定",
+            "C": "Pool1 の RDP プロパティとセッション ホストのグループ ポリシー設定",
+            "D": "Pool1 の RDP プロパティとユーザー デバイスのグループ ポリシー設定",
+            "E": "Pool1 の RDP プロパティのみ"
+        },
+        "correct_answer": ["D"],
+        "explanation": "ユーザーの接続に対して USB デバイス リダイレクトを有効にするには、接続の RDP プロパティとユーザーのデバイスのグループ ポリシーの両方を構成する必要があります。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/configure-user-experience-settings/7-configure-device-redirections"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - MSIX アプリアタッチ",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。Azure Files を使用して MSIX アプリのアタッチを実装する予定です。どの 2 種類のアクセス許可を構成する必要がありますか?",
+        "options": {
+            "A": "Shared Access Signature (SAS)",
+            "B": "Microsoft Entra カスタム ロール",
+            "C": "NTFS",
+            "D": "ロールベースのアクセス制御 (RBAC)"
+        },
+        "correct_answer": ["C", "D"],
+        "explanation": "MSIX アプリを Azure Files に格納する場合は、セッション ホストのすべてのセッション ホスト仮想マシンに、Azure ストレージ アカウント RBAC とファイル共有の NTFS アクセス許可の両方を共有に割り当てる必要があります。Microsoft Entra カスタム ロールは、特定の許可されたアクションを定義するために使われますが、Azure Files のアクセス許可コンポーネントではありません。Azure Files では SAS は使用できません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/install-configure-apps-session-host/4-setup-file-share-for-msix-app-attach"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - MSIX アプリアタッチ",
+        "question": "次のリソースを含む Azure Virtual Desktop のインフラストラクチャを所有しています。• Pool1:ホスト プール • Host1:Pool1 内のセッション ホスト • AP1:Pool1 用のアプリケーション グループ MSIX アプリのアタッチを使用して、新しい MSIX イメージを作成する予定です。この MSIX イメージをデプロイする必要があります。最初に何をする必要がありますか?",
+        "options": {
+            "A": "MSIX パッケージの状態をアクティブに設定します。",
+            "B": "MSIX イメージを Host1 に追加します。",
+            "C": "MSIX イメージを Pool1 に割り当てます。",
+            "D": "MSIX アプリを AP1 に公開します。",
+            "E": "MSIX アプリ アタッチ アプリケーションの自動更新をオフにします。"
+        },
+        "correct_answer": ["E"],
+        "explanation": "MSIX アプリのアタッチのベスト プラクティスとして、最初にアプリケーションの自動更新を無効にする必要があります。",
+        "references": [
+            "https://learn.microsoft.com/azure/virtual-desktop/what-is-app-attach",
+            "https://learn.microsoft.com/azure/virtual-desktop/app-attach-azure-portal"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - アプリケーショングループ",
+        "question": "Azure Virtual Desktop のインフラストラクチャを所有しています。PowerShell を使用してスタート メニュー アプリケーションをいくつか含む AppGroup1 という名前の RemoteApp アプリケーション グループを作成します。PowerShell を使用し、AppGroup1 へのアクセス権をユーザーに付与する必要があります。どの PowerShell コマンドレットを実行すればよいでしょうか?",
+        "options": {
+            "A": "Get-AzWvdStartMenuItem",
+            "B": "New-AzRoleAssignment",
+            "C": "New-AzWvdApplication",
+            "D": "New-AzWvdApplicationGroup"
+        },
+        "correct_answer": ["B"],
+        "explanation": "アプリ グループ内の RemoteApp プログラムへのアクセス権をユーザーに付与するには、New-AzRoleAssignment が必要です。残りは有効な PowerShell コマンドレットですが、アプリが公開されたか、適切なアクセス許可が割り当てられているのかどうかは確認しません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/install-configure-apps-session-host/6-demonstration-configure-apps-for-users",
+            "https://learn.microsoft.com/azure/virtual-desktop/manage-app-groups-powershell?tabs=azure-powershell"
+        ]
+        },
+        {
+        "category": "Azure Virtual Desktop - MSIX アプリアタッチ",
+        "question": "Pool1 という名前の Azure Virtual Desktop ホスト プールを所有しています。Pool1 のセッション ホストは、contoso.com という名前の Active Directory Domain Services (AD DS) ドメインのメンバーです。MSIX アプリ アタッチと storage1 という名前の Azure Storage アカウントを使用して、Pool1 用の MSIX アプリ ファイルを格納する予定です。MSIX アプリ ファイルを格納するために、storage1 にはどのような構成が必要でしょうか?",
+        "options": {
+            "A": "階層型名前空間を有効にします。",
+            "B": "大きなファイルの共有を有効にします。",
+            "C": "ネットワーク ファイル システム v3 を有効にします。",
+            "D": "ストレージ アカウントを contoso.com ドメインに参加させます。"
+        },
+        "correct_answer": ["D"],
+        "explanation": "Azure Storage アカウントを使用して Azure Virtual Desktop セッション ホストの MSIX アプリ ファイルを格納するには、ストレージ アカウントを AD DS に参加させる必要があります。階層型名前空間、大きなファイル共有、およびネットワーク ファイル システム v3 は、Azure Virtual Desktop では使用されません。",
+        "references": [
+            "https://learn.microsoft.com/training/modules/install-configure-apps-session-host/4-setup-file-share-for-msix-app-attach"
+        ]
+        }
+    ]
+}
+
