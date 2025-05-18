@@ -3120,6 +3120,527 @@
             "references": [
               "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/app-attach-overview"
             ]
+          },
+          {
+            "category": "ネットワーク",
+            "question": "Azure Virtual Desktop において、リアルタイム RDP トラフィックに優先的に帯域を確保するための QoS ポリシーを設定するには、どの機能を使用する必要がありますか？",
+            "options": {
+              "A": "Azure NSG (Network Security Group)",
+              "B": "RDP Shortpath",
+              "C": "Azure Front Door",
+              "D": "Azure Load Balancer"
+            },
+            "correct_answer": ["B"],
+            "explanation": "Azure Virtual Desktop では、マネージドネットワーク (ExpressRoute やサイト間 VPN など) 上で直接的な UDP ベースの接続を確立する RDP Shortpath を使用すると、RDP データに DSCP で QoS ポリシーを設定できます。NSG やロードバランサーでは、個々の RDP トラフィックに対する QoS 制御はできません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/rdp-quality-of-service-qos"]
+          },
+          {
+            "category": "ネットワーク",
+            "question": "Azure Virtual Desktop の RDP Shortpath 機能をパブリック ネットワークで使用する場合、最初に試行される UDP 接続の方式はどれですか？",
+            "options": {
+              "A": "Direct UDP (リスナーを使用)",
+              "B": "STUN プロトコル (NAT トラバーサル)",
+              "C": "TURN プロトコル (中継接続)",
+              "D": "VPN トンネル"
+            },
+            "correct_answer": ["B"],
+            "explanation": "パブリック ネットワークで RDP Shortpath を使用する際、最優先される方式は STUN プロトコルを利用した直接 UDP 接続です。STUN による接続に失敗した場合に限り、TURN プロトコルによる中継接続が使われます。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/rdp-shortpath"]
+          },
+          {
+            "category": "ネットワーク",
+            "question": "Azure Virtual Desktop で RDP Shortpath の マネージド ネットワーク の例として正しいものはどれですか？",
+            "options": {
+              "A": "Azure ExpressRoute プライベート ピアリング",
+              "B": "インターネット経由の直接接続",
+              "C": "モバイル回線 (3G/4G)",
+              "D": "サイト間 VPN または ExpressRoute"
+            },
+            "correct_answer": ["D"],
+            "explanation": "RDP Shortpath のマネージドネットワークとは、Azure ExpressRoute プライベート ピアリングや IPsec VPN などのプライベート接続を指します。インターネットやモバイル回線経由はパブリック ネットワークとなります。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/rdp-shortpath"]
+          },
+          {
+            "category": "ネットワーク",
+            "question": "Azure Virtual Desktop で RDP Shortpath を有効にした場合、RDP トラフィックに対してどのような追加機能が使用可能になりますか？",
+            "options": {
+              "A": "RDP トラフィックの DSCP マークによる QoS 設定",
+              "B": "RDP 通信の完全 AES 暗号化",
+              "C": "すべてのポートでの通信を許可",
+              "D": "独自の VPN トンネルによる接続"
+            },
+            "correct_answer": ["A"],
+            "explanation": "RDP Shortpath (マネージドネットワーク) では、RDP 接続に対して DSCP による QoS 優先度マークが設定でき、各セッションごとの帯域制限 (スロットリング) も可能です。他の選択肢は RDP Shortpath 固有の機能ではありません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/rdp-shortpath"]
+          },
+          {
+            "category": "セキュリティ",
+            "question": "Azure Virtual Desktop でホストプールのリソースにユーザーを割り当てるには、どの Azure ロールが必要ですか？",
+            "options": {
+              "A": "Desktop Virtualization Contributor",
+              "B": "Desktop Virtualization Contributor と User Access Administrator",
+              "C": "Owner ロール",
+              "D": "Reader ロール"
+            },
+            "correct_answer": ["B"],
+            "explanation": "Desktop Virtualization Contributor ロールはホストプールやアプリケーション グループなど AVD リソースの管理権限を持ちますが、ユーザーまたはグループを割り当てる権限は含まれていません。ユーザー割り当てを行うには、追加で User Access Administrator ロールが必要です。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/rbac"]
+          },
+          {
+            "category": "セキュリティ",
+            "question": "Azure Virtual Desktop のセッションホストへのアクセスを保護するために使用できるネットワーク セキュリティ機能は次のうちどれですか？",
+            "options": {
+              "A": "Azure Network Security Groups (NSGs)",
+              "B": "カスタム ルート (User Defined Routes)",
+              "C": "Azure Firewall",
+              "D": "上記すべて"
+            },
+            "correct_answer": ["D"],
+            "explanation": "Azure Virtual Desktop の接続には、Network Security Group、ユーザ定義ルート、Azure Firewall などのネットワークセキュリティを組み合わせて使用し、接続トラフィックを制御・保護することが推奨されます。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/plan-secure-host-pools"]
+          },
+          {
+            "category": "セキュリティ",
+            "question": "Azure Virtual Desktop のセッションホストに対する管理者アクセスを保護するために推奨される方法は次のうちどれですか？",
+            "options": {
+              "A": "Azure Bastion または Just-In-Time VM アクセス (JIT)",
+              "B": "パブリックインターネットに RDP ポートを常時開放",
+              "C": "Azure Front Door の経由",
+              "D": "セッションホスト上に VPN ゲートウェイを構築"
+            },
+            "correct_answer": ["A"],
+            "explanation": "セッションホストへの安全な管理アクセスには、Azure Bastion を使用するか、Microsoft Defender for Cloud の JIT 機能を使って一時的にポートを開放する方法が推奨されます。パブリックに RDP ポートを開放するのは推奨されません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/plan-secure-host-pools"]
+          },
+          {
+            "category": "セキュリティ",
+            "question": "Azure Virtual Desktop のセッションホストのセキュリティ監視に推奨されるツールは次のうちどれですか？",
+            "options": {
+              "A": "Microsoft Defender for Cloud",
+              "B": "Azure AD Identity Protection",
+              "C": "Azure Policy",
+              "D": "Microsoft Sentinel"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop のセッションホストは通常の Azure VM と同じく、Microsoft Defender for Cloud を使用して脆弱性評価や脅威検出を実施することが推奨されています。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/plan-secure-host-pools"]
+          },
+          {
+            "category": "ストレージ",
+            "question": "Azure Virtual Desktop のユーザープロファイル コンテナ (FSLogix Profile Container) を保存するストレージとして Microsoft が一般的に推奨しているのはどれですか？",
+            "options": {
+              "A": "Azure Files",
+              "B": "Azure Blob Storage",
+              "C": "Managed Disk",
+              "D": "Azure Data Lake Storage"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Microsoft は FSLogix プロファイルコンテナの格納先として、ほとんどのケースで Azure Files を推奨しています。Azure Files は SMB 共有を使用するため、FSLogix コンテナの保存に適しています。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"]
+          },
+          {
+            "category": "ストレージ",
+            "question": "Azure Files のファイル共有でサポートされる最大容量はどれくらいですか？",
+            "options": {
+              "A": "100 TiB",
+              "B": "1 TiB",
+              "C": "10 TiB",
+              "D": "5 PiB"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Files のファイル共有は、1 共有あたり最大 100 TiB の容量をサポートしています。これはユーザープロファイル格納など一般的な用途に十分な容量です。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"]
+          },
+          {
+            "category": "ストレージ",
+            "question": "多数 (200 人以上) のユーザーが同時利用する FSLogix プロファイル環境の場合、Azure Files のどの階層を選択することが推奨されますか？",
+            "options": {
+              "A": "Premium ファイル共有",
+              "B": "Standard ファイル共有 (GPv2)",
+              "C": "Ultra ファイル共有",
+              "D": "RA-GZRS (読み取りアクセス Geo ゾーン冗長)"
+            },
+            "correct_answer": ["A"],
+            "explanation": "200 人以上など I/O 負荷が高い大規模な環境では、高パフォーマンスの Premium ファイル共有が推奨されます。Standard 共有はユーザーが少ない負荷の軽い場合に適しています。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"]
+          },
+          {
+            "category": "ストレージ",
+            "question": "FSLogix のプロファイル コンテナを保存する共有フォルダーで使用されるプロトコルは次のうちどれですか？",
+            "options": {
+              "A": "SMB (Server Message Block)",
+              "B": "NFS (Network File System)",
+              "C": "FTP (File Transfer Protocol)",
+              "D": "HTTP"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix コンテナは SMB プロトコルをサポートするファイル共有に保存されます。したがって Azure Files (SMB 共有) などが使われます。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"]
+          },
+          {
+            "category": "ホストプール",
+            "question": "Azure Virtual Desktop のプールド (共有) ホストプールでは、1 台のセッションホストに複数ユーザーのセッションを同時に配置できますか？",
+            "options": {
+              "A": "はい、プールドホストプールでは複数ユーザーの同時セッションが可能です",
+              "B": "いいえ、プールドホストプールでは同時に 1 ユーザーのみ",
+              "C": "いいえ、常に個人ホストプールを使用する必要がある",
+              "D": "はい、ただしホストプールごとに制限あり"
+            },
+            "correct_answer": ["A"],
+            "explanation": "プールドホストプールでは、複数のユーザーが同一セッションホストに同時に接続できます。これによりリソースを共有してコストを削減できます。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/terminology"]
+          },
+          {
+            "category": "ホストプール",
+            "question": "パーソナル (個人) ホストプールでは、1 台のセッションホストに許可されるセッション数はいくつですか？",
+            "options": {
+              "A": "1",
+              "B": "2",
+              "C": "無制限",
+              "D": "ホストプールごとに設定可能"
+            },
+            "correct_answer": ["A"],
+            "explanation": "パーソナルホストプールでは、各セッションホストは専任ユーザー 1 人に割り当てられ、常に 1 つのセッションのみをホストします。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/terminology"]
+          },
+          {
+            "category": "ホストプール",
+            "question": "FSLogix プロファイル コンテナを使用してユーザーデータを保存する必要があるホストプールのタイプはどちらですか？",
+            "options": {
+              "A": "パーソナル ホストプール",
+              "B": "プールド (共有) ホストプール",
+              "C": "どちらも必要",
+              "D": "どちらも不要"
+            },
+            "correct_answer": ["B"],
+            "explanation": "プールドホストプールでは、ユーザーが異なるセッションホストに再接続する可能性があるため、ユーザープロファイルを共有ストレージに保存する必要があります。そのため FSLogix プロファイル コンテナの使用が推奨されます。パーソナルプールでは常に同じホストが使われるため OS ディスクに保存しても構いません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/terminology"]
+          },
+          {
+            "category": "ホストプール",
+            "question": "Azure Virtual Desktop の RemoteApp アプリケーショングループは、どの種類のホストプールで使用できますか？",
+            "options": {
+              "A": "プールド (共有) ホストプールのみ",
+              "B": "パーソナル ホストプールのみ",
+              "C": "両方で使用可能",
+              "D": "ホストプールでは使用できない"
+            },
+            "correct_answer": ["A"],
+            "explanation": "RemoteApp アプリケーション グループはプールドホストプールでのみ使用できます。パーソナルプールではデスクトップ グループのみ作成可能です。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/terminology"]
+          },
+          {
+            "category": "アイデンティティ",
+            "question": "Azure Virtual Desktop で Azure Files 上に FSLogix プロファイル コンテナを構成するには、セッションホストはどのドメインに参加している必要がありますか？",
+            "options": {
+              "A": "オンプレミス Active Directory ドメイン",
+              "B": "Microsoft Entra ID (Azure AD) テナント",
+              "C": "Microsoft Entra Domain Services (Azure AD DS)",
+              "D": "Azure AD への参加は不要"
+            },
+            "correct_answer": ["A", "C"],
+            "explanation": "Azure Files に FSLogix プロファイルコンテナを保存する場合、セッションホストはオンプレミス AD ドメインまたは Azure AD Domain Services (Azure AD DS) に参加している必要があります。純粋な Azure AD 参加だけでは SMB 共有にアクセスできません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"]
+          },
+          {
+            "category": "アイデンティティ",
+            "question": "Azure Virtual Desktop でセッションホストを Microsoft Entra ID (Azure AD) に参加させると、省略できるものは次のうちどれですか？",
+            "options": {
+              "A": "オンプレミス AD ドメインコントローラ",
+              "B": "Azure AD Domain Services (管理ドメイン)",
+              "C": "どちらも不要になる",
+              "D": "Microsoft 365 E ライセンス"
+            },
+            "correct_answer": ["C"],
+            "explanation": "セッションホストを Azure AD ドメインに参加させると、オンプレミスのドメインコントローラや Azure AD DS (管理ドメイン) を配置する必要がなくなります。ただし、Azure Files を使う場合は Azure AD Kerberos の構成が別途必要です。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/azure-ad-joined-session-hosts"]
+          },
+          {
+            "category": "アイデンティティ",
+            "question": "Azure Virtual Desktop で多要素認証 (MFA) が有効な場合、ユーザーはどのタイミングで MFA を求められますか？",
+            "options": {
+              "A": "AVD サービス (ワークスペース) への接続時",
+              "B": "セッションホストへの RDP 接続時",
+              "C": "Windows ドメイン ログオン時",
+              "D": "最初のサインイン時のみ"
+            },
+            "correct_answer": ["A"],
+            "explanation": "MFA を有効にすると、Azure Virtual Desktop サービス (ワークスペース登録など) への接続時に多要素認証が要求されます。セッションホストへのログオンは SSO によって透過的に行われるため、この時点では改めて MFA は発生しません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/set-up-mfa"]
+          },
+          {
+            "category": "アイデンティティ",
+            "question": "Azure Virtual Desktop のセッションホストは次のうちどのアイデンティティに参加させることができますか？",
+            "options": {
+              "A": "Microsoft Entra ID (Azure AD)",
+              "B": "Active Directory (オンプレミス AD)",
+              "C": "Microsoft Entra Domain Services (Azure AD DS)",
+              "D": "Microsoft アカウント (個人)"
+            },
+            "correct_answer": ["A", "B", "C"],
+            "explanation": "Azure Virtual Desktop のセッションホストは、同じ Azure AD テナントに参加させるか、オンプレミス AD ドメインに参加させるか、Azure AD DS 管理ドメインに参加させることが可能です。個人の Microsoft アカウントはサポートされていません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/prerequisites"]
+          },
+          {
+            "category": "監視",
+            "question": "Azure Virtual Desktop Insights ダッシュボードはどのサービスをベースに構築されていますか？",
+            "options": {
+              "A": "Azure Monitor Workbooks",
+              "B": "Power BI レポート",
+              "C": "Azure Portal ダッシュボード",
+              "D": "Log Analytics クエリ"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop Insights は Azure Monitor Workbooks を基盤に構築されたダッシュボードです。Log Analytics ワークスペースに収集したデータをワークブックで可視化します。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/insights"]
+          },
+          {
+            "category": "監視",
+            "question": "Azure Virtual Desktop Insights を使用する際、ダッシュボードの表示に必要な最低限の Azure RBAC ロールはどれですか？",
+            "options": {
+              "A": "Virtual Machine Contributor",
+              "B": "Desktop Virtualization Reader",
+              "C": "Log Analytics Reader",
+              "D": "Desktop Virtualization Reader と Log Analytics Reader"
+            },
+            "correct_answer": ["D"],
+            "explanation": "Insights を閲覧するには、AVD リソースが存在するリソースグループに Desktop Virtualization Reader ロール、関連する Log Analytics ワークスペースに Log Analytics Reader ロールが割り当てられている必要があります。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/insights"]
+          },
+          {
+            "category": "監視",
+            "question": "Azure Virtual Desktop Insights を有効にするには、Log Analytics ワークスペースで収集すべきデータは次のうちどれですか？",
+            "options": {
+              "A": "AVD の診断ログ",
+              "B": "推奨されるパフォーマンスカウンター",
+              "C": "推奨される Windows イベントログ",
+              "D": "以上すべて"
+            },
+            "correct_answer": ["D"],
+            "explanation": "Insights を利用するには、Log Analytics ワークスペースに AVD の診断データ、推奨されるパフォーマンスカウンター、推奨される Windows イベントログのすべてを収集する必要があります。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/insights"]
+          },
+          {
+            "category": "自動化",
+            "question": "Azure Virtual Desktop のホストプールやセッションホストの作成を自動化する方法として適さないものは次のうちどれですか？",
+            "options": {
+              "A": "Azure ポータル",
+              "B": "Azure CLI",
+              "C": "ARM テンプレート",
+              "D": "Azure PowerShell"
+            },
+            "correct_answer": ["A"],
+            "explanation": "ホストプールの作成は Azure CLI や Azure PowerShell、ARM テンプレート、Bicep などを使用して自動化できます。Azure ポータルは GUI 操作のため、自動化には含まれません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/plan-az-virtual-desktop"]
+          },
+          {
+            "category": "自動化",
+            "question": "Azure Virtual Desktop のホストプール作成に使用できるツールをすべて選択してください (複数選択可)。",
+            "options": {
+              "A": "Azure CLI",
+              "B": "Azure PowerShell",
+              "C": "ARM テンプレート",
+              "D": "Bicep",
+              "E": "Azure ポータル"
+            },
+            "correct_answer": ["A", "B", "C", "D"],
+            "explanation": "ホストプールは Azure CLI、Azure PowerShell、ARM テンプレート、Bicep などで自動化して作成できます。Azure ポータルは手動操作であり、自動化ツールには含まれません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/plan-az-virtual-desktop"]
+          },
+          {
+            "category": "ライセンス",
+            "question": "次のうち、Azure Virtual Desktop で Windows 10 Enterprise マルチセッションを使用するために適格なライセンスではないものはどれですか？",
+            "options": {
+              "A": "Microsoft 365 E3",
+              "B": "Windows 10 Enterprise E3",
+              "C": "Office 365 E3",
+              "D": "Windows Virtual Desktop Access (VDA) per user"
+            },
+            "correct_answer": ["C"],
+            "explanation": "Windows 10 Enterprise マルチセッションの利用には、Microsoft 365 E3/E5、Windows Enterprise E3/E5、Windows VDA per user などのライセンスが必要です。Office 365 E3 (エンタープライズ向け Office) は OS の利用権を含まないため適格ではありません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/licensing"]
+          },
+          {
+            "category": "ライセンス",
+            "question": "Azure Virtual Desktop のユーザー単位アクセス料金モデル (per-user pricing) が使用できるのはどのシナリオですか？",
+            "options": {
+              "A": "内部使用 (社内従業員向け)",
+              "B": "外部使用 (顧客やパートナーなど)",
+              "C": "内部・外部問わずどちらでも",
+              "D": "使用できない"
+            },
+            "correct_answer": ["B"],
+            "explanation": "Azure Virtual Desktop の per-user 料金モデルは、外部商用利用の場合にのみ使用できます。内部利用には従来の有資格ライセンスが必要で、内部用途では per-user モデルは適用できません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/licensing"]
+          },
+          {
+            "category": "FSLogix",
+            "question": "FSLogix でプロファイル コンテナを設定している場合、Office データ コンテナ (ODFC) を別途設定する必要がありますか？",
+            "options": {
+              "A": "はい、必ず ODFC も設定する必要がある",
+              "B": "いいえ、プロファイルコンテナに Office データが含まれるため不要",
+              "C": "ユーザー数が多い場合のみ必要",
+              "D": "Windows Server では不要"
+            },
+            "correct_answer": ["B"],
+            "explanation": "FSLogix のプロファイル コンテナには Microsoft 365 (Office) アプリのデータも含まれるため、プロファイルコンテナを構成していれば ODFC コンテナは不要です。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"]
+          },
+          {
+            "category": "FSLogix",
+            "question": "FSLogix Cloud Cache の主な機能は次のうちどれですか？",
+            "options": {
+              "A": "プロファイル データを複数保存先に同期して冗長化する",
+              "B": "ローカル SSD 上に全プロファイルをキャッシュ",
+              "C": "圧縮転送でログオンを高速化",
+              "D": "Azure AD 連携なしに共有フォルダをアクセス"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Cloud Cache は、プロファイルコンテナの複数の保存先にデータを非同期にレプリケートし、プライマリが利用できない場合にセカンダリにフェールオーバーします。これにより高可用性とほぼゼロ RPO を実現します。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"]
+          },
+          {
+            "category": "FSLogix",
+            "question": "FSLogix の ODFC (Office コンテナ) には主にどのようなデータが格納されますか？",
+            "options": {
+              "A": "OS のレジストリ",
+              "B": "Microsoft 365 アプリ (Outlook、OneDrive、Teams など) に関連するデータ",
+              "C": "ユーザープロファイルの全データ",
+              "D": "アプリケーションのログファイル"
+            },
+            "correct_answer": ["B"],
+            "explanation": "Office Data File Container (ODFC) には、Outlook のメールデータや OneDrive の同期データ、Teams キャッシュなど、Microsoft 365 アプリに固有のデータが格納されます。",
+            "references": ["https://learn.microsoft.com/fslogix/concepts-container-types"]
+          },
+          {
+            "category": "FSLogix",
+            "question": "FSLogix のコンテナ設定において、推奨される構成は次のうちどれですか？",
+            "options": {
+              "A": "プロファイル用と Office 用の 2 つのコンテナ",
+              "B": "プロファイルと Office をまとめた単一コンテナ",
+              "C": "コンテナを使用せずローカルプロファイルを使用",
+              "D": "ユーザーごとに動的に切り替える"
+            },
+            "correct_answer": ["B"],
+            "explanation": "一般的には、プロフィールコンテナと Office データを同じ VHDx ファイル (単一コンテナ) にまとめる構成が推奨されます。これにより管理が簡単になり、ODFC を別途構成する必要もなくなります。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"]
+          },
+          {
+            "category": "アプリケーション",
+            "question": "Azure Virtual Desktop の App Attach と MSIX App Attach 機能でサポートされるアプリケーションパッケージ形式は次のうちどれですか？",
+            "options": {
+              "A": ".msix および .msixbundle",
+              "B": ".appx および .appxbundle",
+              "C": ".appv (App-V パッケージ)",
+              "D": "上記すべて"
+            },
+            "correct_answer": ["A"],
+            "explanation": "MSIX App Attach でサポートされているパッケージ形式は .msix および .msixbundle です。Appx/.appxbundle や App-V (.appv) は App Attach (従来方式) でのみサポートされます。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/app-attach-overview"]
+          },
+          {
+            "category": "アプリケーション",
+            "question": "Azure Virtual Desktop 環境で Microsoft Teams を最適化して動作させるために使用する技術は次のうちどれですか？",
+            "options": {
+              "A": "Remote Desktop WebRTC Redirector Service",
+              "B": "RDP グラフィックス (RemoteFX)",
+              "C": "Azure Virtual WAN",
+              "D": "Windows Autopatch"
+            },
+            "correct_answer": ["A"],
+            "explanation": "AVD では Teams のメディア (音声/映像) 処理を最適化するために Remote Desktop WebRTC Redirector サービスが提供されています。これにより、セッションホスト上でメディアデータをローカルに処理し、品質を向上させます。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/study-guide"]
+          },
+          {
+            "category": "アプリケーション",
+            "question": "RemoteApp グループと Desktop グループの両方に同じユーザーを割り当てた場合、ユーザーに表示されるリソースは何によって決定されますか？",
+            "options": {
+              "A": "優先アプリケーショングループタイプ (Preferred application group type)",
+              "B": "実行中のセッションホストの場所",
+              "C": "ユーザーのグループメンバーシップ",
+              "D": "同時に両方が表示される"
+            },
+            "correct_answer": ["A"],
+            "explanation": "ユーザーが同一ホストプールの Desktop グループと RemoteApp グループの両方に割り当てられている場合、ホストプールで設定された優先アプリケーショングループタイプに従って表示リソースが決まります。例えば優先タイプが Desktop に設定されていれば、RemoteApp アプリは表示されません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/terminology"]
+          },
+          {
+            "category": "クライアント",
+            "question": "次のうち、Azure Virtual Desktop の公式クライアントが提供されていないプラットフォームはどれですか？",
+            "options": {
+              "A": "Windows 11",
+              "B": "macOS",
+              "C": "iOS (iPad/iPhone)",
+              "D": "Linux (Ubuntu)"
+            },
+            "correct_answer": ["D"],
+            "explanation": "Azure Virtual Desktop のクライアントは、Windows、macOS、iOS/Android、および Web クライアントが提供されています。Linux 向けの公式クライアントは提供されていません。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/users/remote-desktop-clients-overview"]
+          },
+          {
+            "category": "クライアント",
+            "question": "2025 年 5 月以降、Windows 向け Remote Desktop アプリ (Microsoft Store 配布版) のサポートが終了した後、Windows ユーザーはどのクライアントを使用する必要がありますか？",
+            "options": {
+              "A": "Microsoft Remote Desktop (Windows App)",
+              "B": "従来の Remote Desktop Client (MSI)",
+              "C": "Azure Portal の Remote Desktop",
+              "D": "Citrix Workspace"
+            },
+            "correct_answer": ["A"],
+            "explanation": "2025 年 5 月 27 日以降、Microsoft Store 版の Remote Desktop アプリはサポート終了となり、Windows App 版の Microsoft Remote Desktop (いわゆる Windows App) を使用する必要があります。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/users/remote-desktop-clients-overview"]
+          },
+          {
+            "category": "クライアント",
+            "question": "Azure Virtual Desktop の接続に使用する Web ブラウザ クライアントはどれですか？",
+            "options": {
+              "A": "Remote Desktop Web クライアント",
+              "B": "Azure Portal 内蔵クライアント",
+              "C": "Windows 365 Web クライアント",
+              "D": "Office ポータル"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop にはブラウザ接続用の Remote Desktop Web クライアントが提供されています。これを使えばブラウザから仮想デスクトップや RemoteApp にアクセスできます。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/users/remote-desktop-clients-overview"]
+          },
+          {
+            "category": "災害復旧",
+            "question": "FSLogix Cloud Cache を使用すると、プライマリ リージョンに障害が発生した場合にユーザープロファイルをどのように扱えますか？",
+            "options": {
+              "A": "セカンダリリージョンの保存先にフェールオーバーし、レプリケートされたデータを使用する",
+              "B": "プロファイルデータを再構築する必要がある",
+              "C": "ローカルキャッシュだけで作業を継続する",
+              "D": "Azure Backup から復元する"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Cloud Cache を構成すると、複数の保存先にプロファイルデータを非同期レプリケートし、プライマリが利用できない場合は自動的にセカンダリ保存先を使用します。これにより障害発生時でもほぼリアルタイムのデータアクセスが可能です。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/store-fslogix-profile"]
+          },
+          {
+            "category": "災害復旧",
+            "question": "Azure Files を FSLogix プロファイル保存先として使用する場合、利用可能な冗長化オプションはどれですか？",
+            "options": {
+              "A": "Zone-Redundant Storage (ZRS)",
+              "B": "Geo-Redundant Storage (GRS)",
+              "C": "LRS (Locally-Redundant Storage) のみ",
+              "D": "RA-GZRS"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Files では可能な場合に ZRS (ゾーン冗長) を使用してデータの可用性を高めることができます。GRS は一部制限があるため、特にプライマリ リージョンでの可用性強化には ZRS が用いられます。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/azure-virtual-desktop-multi-region-bcdr"]
+          },
+          {
+            "category": "災害復旧",
+            "question": "Azure Virtual Desktop のマルチリージョン構成では、ユーザーが同時にプライマリとセカンダリのホストプールにサインインすることはどう扱われるべきですか？",
+            "options": {
+              "A": "両方への同時サインインを許可して高可用化する",
+              "B": "同時アクセスは禁止し、切り替え後にセカンダリでのみ利用可能にする",
+              "C": "複数サインインは問題ない",
+              "D": "ユーザーには別ワークスペースを提供する"
+            },
+            "correct_answer": ["B"],
+            "explanation": "マルチリージョン (プライマリ/セカンダリ) 構成では、ユーザーが両方のホストプールに同時接続するとプロファイル競合が発生する可能性があります。そのため同時アクセスは禁止し、フェールオーバー時にプライマリを切断してからセカンダリへ接続するよう設計します。",
+            "references": ["https://learn.microsoft.com/azure/virtual-desktop/azure-virtual-desktop-multi-region-bcdr"]
           }
     ]
 }
