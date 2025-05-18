@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>資格試験対策</title>
+    <title>AWS MLS対策</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
     <div id="app" class="max-w-4xl mx-auto p-6">
-        <h1 class="text-2xl font-bold mb-6">資格試験対策</h1>
+        <h1 class="text-2xl font-bold mb-6">AWS MLS対策</h1>
         <div id="content"></div>
     </div>
 
@@ -22,14 +22,16 @@
             const [userAnswers, setUserAnswers] = useState([]);
             const [startTime, setStartTime] = useState(null);
             const [elapsedTime, setElapsedTime] = useState(0);
-            const [stage, setStage] = useState('exam-selection'); // 'exam-selection', 'setup', 'quiz', 'results', 'all-questions'
+            const [stage, setStage] = useState('initial'); // 'initial', 'setup', 'quiz', 'results', 'all-questions'
             const [shuffleOptions, setShuffleOptions] = useState(false);
-            const [examFiles, setExamFiles] = useState([]);
-            const [examMetadata, setExamMetadata] = useState(null);
-            const [isLoading, setIsLoading] = useState(false);
             const timerRef = useRef(null);
 
-<<<<<<< HEAD
+            // 利用可能な試験ファイルのリスト
+            // 実際の環境では、サーバーサイドAPIでディレクトリ内容を取得するのが理想的
+            const availableExamFiles = [
+                "mls.json",
+            ];
+
             useEffect(() => {
                 const loadQuestions = async () => {
                     try {
@@ -41,49 +43,12 @@
                         setAllQuestions(data.questions);
                         setStage('setup');
                     } catch (error) {
-                        setStage('upload');
+                        alert('ファイルの読み込み中にエラーが発生しました: ' + error.message);
                     }
                 };
-=======
-            // 利用可能な試験ファイルのリスト
-            // 実際の環境では、サーバーサイドAPIでディレクトリ内容を取得するのが理想的
-            const availableExamFiles = [
-                "mls.json",
-            ];
->>>>>>> 731aea9 (.gitignoreを追加し、mls.jsonをquestionsフォルダに移動してメタデータを追加)
 
-            useEffect(() => {
-                // 試験ファイルリストを設定
-                setExamFiles(availableExamFiles);
+                loadQuestions();
             }, []);
-
-            // 試験ファイルのメタデータを取得するヘルパー関数
-            const loadExamMetadata = async (filename) => {
-                try {
-                    setIsLoading(true);
-                    const response = await fetch(`questions/${filename}`);
-                    const data = await response.json();
-                    
-                    if (!data.metadata || !data.questions) {
-                        throw new Error(`ファイル ${filename} には必要なメタデータまたは問題が含まれていません。`);
-                    }
-                    
-                    return {
-                        filename,
-                        metadata: data.metadata,
-                        questionCount: data.questions.length
-                    };
-                } catch (error) {
-                    console.error(`${filename} の読み込み中にエラー: ${error.message}`);
-                    return {
-                        filename,
-                        metadata: { examName: filename.replace('.json', '') },
-                        error: error.message
-                    };
-                } finally {
-                    setIsLoading(false);
-                }
-            };
 
             useEffect(() => {
                 if (startTime && stage === 'quiz') {
@@ -130,27 +95,6 @@
                 return Object.fromEntries(shuffled);
             };
 
-            // 選択した試験ファイルを読み込む
-            const selectExam = async (filename) => {
-                try {
-                    setIsLoading(true);
-                    const response = await fetch(`questions/${filename}`);
-                    const data = await response.json();
-                    
-                    if (!data.metadata || !data.questions || !Array.isArray(data.questions)) {
-                        throw new Error('無効な問題ファイル形式です。');
-                    }
-                    
-                    setExamMetadata(data.metadata);
-                    setAllQuestions(data.questions);
-                    setStage('setup');
-                } catch (error) {
-                    alert('問題の読み込み中にエラーが発生しました: ' + error.message);
-                } finally {
-                    setIsLoading(false);
-                }
-            };
-
             const startQuiz = (questionCount) => {
                 if (isNaN(questionCount) || questionCount < 1 || questionCount > allQuestions.length) {
                     alert('有効な問題数を入力してください。');
@@ -190,67 +134,6 @@
                 return userAnswer &&
                     userAnswer.length === correctAnswer.length &&
                     userAnswer.every(answer => correctAnswer.includes(answer));
-            };
-
-            // 試験選択画面のコンポーネント
-            const ExamSelectionView = () => {
-                const [examInfoList, setExamInfoList] = useState([]);
-                const [loadingStatus, setLoadingStatus] = useState({});
-                
-                useEffect(() => {
-                    const loadAllExamMetadata = async () => {
-                        const examInfoPromises = examFiles.map(filename => {
-                            setLoadingStatus(prev => ({ ...prev, [filename]: true }));
-                            return loadExamMetadata(filename);
-                        });
-                        
-                        const results = await Promise.all(examInfoPromises);
-                        setExamInfoList(results);
-                        
-                        const newStatus = {};
-                        results.forEach(r => {
-                            newStatus[r.filename] = false;
-                        });
-                        setLoadingStatus(newStatus);
-                    };
-                    
-                    loadAllExamMetadata();
-                }, [examFiles]);
-                
-                return (
-                    <div className="p-4 border rounded">
-                        <h2 className="text-xl font-bold mb-4">利用可能な試験</h2>
-                        {examInfoList.length === 0 && (
-                            <div className="text-center py-8">
-                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-                                <p className="mt-2 text-gray-600">試験リストを読み込み中...</p>
-                            </div>
-                        )}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {examInfoList.map(examInfo => (
-                                <div 
-                                    key={examInfo.filename}
-                                    className="p-4 border rounded hover:bg-gray-100 cursor-pointer"
-                                    onClick={() => selectExam(examInfo.filename)}
-                                >
-                                    <h3 className="text-lg font-medium">
-                                        {examInfo.metadata?.examName || examInfo.filename.replace('.json', '')}
-                                    </h3>
-                                    <p className="text-sm text-gray-600">
-                                        {examInfo.metadata?.description || '説明なし'}
-                                    </p>
-                                    <p className="text-xs text-gray-500 mt-2">
-                                        問題数: {examInfo.questionCount || '不明'}
-                                        {examInfo.metadata?.lastUpdated && ` | 最終更新: ${examInfo.metadata.lastUpdated}`}
-                                    </p>
-                                    {examInfo.error && (
-                                        <p className="text-xs text-red-500 mt-1">{examInfo.error}</p>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
             };
 
             const QuestionView = () => {
@@ -409,23 +292,6 @@
 
             return (
                 <div>
-<<<<<<< HEAD
-                    {stage === 'upload' && (
-                        <div className="p-4 border rounded">
-                            <div className="space-y-4 pt-6">
-                                <div>
-                                    <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700">
-                                        質問ファイルをアップロードしてください:
-                                    </label>
-                                    <input
-                                        id="file-upload"
-                                        type="file"
-                                        accept=".json"
-                                        onChange={handleFileUpload}
-                                        className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-                                    />
-                                </div>
-=======
                     {/* タイトルを動的に試験名に変更 */}
                     <h1 className="text-2xl font-bold mb-6">
                         {examMetadata ? examMetadata.examName + '対策' : '資格試験対策アプリ'}
@@ -436,40 +302,14 @@
                             <div className="bg-white p-6 rounded-lg shadow-lg">
                                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
                                 <p className="mt-4">読み込み中...</p>
->>>>>>> 731aea9 (.gitignoreを追加し、mls.jsonをquestionsフォルダに移動してメタデータを追加)
                             </div>
                         </div>
                     )}
 
-<<<<<<< HEAD
-=======
                     {stage === 'exam-selection' && <ExamSelectionView />}
 
->>>>>>> 731aea9 (.gitignoreを追加し、mls.jsonをquestionsフォルダに移動してメタデータを追加)
                     {stage === 'setup' && (
                         <div className="p-4 border rounded">
-                            {/* 試験メタデータ表示 */}
-                            {examMetadata && (
-                                <div className="mb-6 p-4 bg-blue-50 rounded">
-                                    <h2 className="text-lg font-semibold mb-2">{examMetadata.examName}</h2>
-                                    <p className="text-sm">{examMetadata.description}</p>
-                                    <div className="mt-2 text-sm">
-                                        {examMetadata.totalQuestions && (
-                                            <span className="mr-3"><span className="font-medium">総問題数:</span> {examMetadata.totalQuestions}</span>
-                                        )}
-                                        {examMetadata.passScore && (
-                                            <span className="mr-3"><span className="font-medium">合格点:</span> {examMetadata.passScore}</span>
-                                        )}
-                                        {examMetadata.examTime && (
-                                            <span className="mr-3"><span className="font-medium">試験時間:</span> {examMetadata.examTime}分</span>
-                                        )}
-                                    </div>
-                                    {examMetadata.lastUpdated && (
-                                        <div className="text-xs text-gray-500 mt-1">最終更新: {examMetadata.lastUpdated}</div>
-                                    )}
-                                </div>
-                            )}
-
                             <div className="space-y-4 pt-6">
                                 <div>
                                     <label htmlFor="question-count">
@@ -481,7 +321,7 @@
                                         min="1"
                                         max={allQuestions.length}
                                         defaultValue={Math.min(10, allQuestions.length)}
-                                        className="w-32 form-input mt-1 ml-2 p-1 border rounded"
+                                        className="w-32 form-input"
                                     />
                                 </div>
 
@@ -511,12 +351,6 @@
                                         className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                                     >
                                         全問題と解答を表示
-                                    </button>
-                                    <button 
-                                        onClick={() => setStage('exam-selection')}
-                                        className="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded ml-2"
-                                    >
-                                        別の試験を選択
                                     </button>
                                 </div>
                             </div>
@@ -573,25 +407,17 @@
                         <div className="p-4 border rounded">
                             <div className="pt-6">
                                 <ResultsView />
-                                <div className="mt-4 space-x-2">
-                                    <button
-                                        onClick={() => {
-                                            setStage('setup');
-                                            setShuffleOptions(false);
-                                            setUserAnswers([]);
-                                            setElapsedTime(0);
-                                        }}
-                                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                    >
-                                        もう一度挑戦する
-                                    </button>
-                                    <button 
-                                        onClick={() => setStage('exam-selection')}
-                                        className="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
-                                    >
-                                        別の試験を選択
-                                    </button>
-                                </div>
+                                <button
+                                    onClick={() => {
+                                        setStage('setup');
+                                        setShuffleOptions(false);
+                                        setUserAnswers([]);
+                                        setElapsedTime(0);
+                                    }}
+                                    className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                >
+                                    もう一度挑戦する
+                                </button>
                             </div>
                         </div>
                     )}
@@ -601,20 +427,12 @@
                             <div className="pt-6">
                                 <div className="flex justify-between items-center mb-6">
                                     <h2 className="text-xl font-bold">全問題一覧（全{allQuestions.length}問）</h2>
-                                    <div>
-                                        <button
-                                            onClick={() => setStage('setup')}
-                                            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mr-2"
-                                        >
-                                            設定に戻る
-                                        </button>
-                                        <button 
-                                            onClick={() => setStage('exam-selection')}
-                                            className="bg-gray-700 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
-                                        >
-                                            別の試験を選択
-                                        </button>
-                                    </div>
+                                    <button
+                                        onClick={() => setStage('setup')}
+                                        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        戻る
+                                    </button>
                                 </div>
                                 <QuestionsList questions={allQuestions} />
                             </div>
