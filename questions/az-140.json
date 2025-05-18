@@ -2385,6 +2385,741 @@
             "correct_answer": ["B"],
             "explanation": "Windows Server のセッションホストを Azure AD に参加させる場合、Microsoft Intune に登録することはできません:contentReference[oaicite:54]{index=54}。",
             "references": ["https://learn.microsoft.com/ja-jp/azure/virtual-desktop/prerequisites#session-host-management"]
+          },
+          {
+            "category": "ネットワーキング",
+            "question": "Azure Virtual Desktop のセッションホストが Azure Virtual Desktop インフラストラクチャと通信するには、セッションホストからどのポートへのアウトバウンド接続を許可する必要がありますか？",
+            "options": {
+              "A": "TCP ポート 3389",
+              "B": "HTTPS (TCP 443)",
+              "C": "UDP ポート 3391",
+              "D": "FTP ポート 21"
+            },
+            "correct_answer": ["B"],
+            "explanation": "Azure Virtual Desktop ではリバースコネクト方式を使用し、セッションホストは Azure Virtual Desktop サービスへのアウトバウンド HTTPS 接続 (ポート 443) により接続を確立します:contentReference[oaicite:0]{index=0}。したがって、セッションホスト側では TCP ポート 443 のアウトバウンド通信を許可する必要があります。TCP ポート 3389 は従来の RDP の着信リッスンであり、AVD では不要です。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/plan-network"
+            ]
+          },
+          {
+            "category": "ネットワーキング",
+            "question": "Azure Virtual Desktop で RDP Shortpath を使用する場合、RDP トラフィックにおいて優先的に使用されるプロトコルはどれですか？",
+            "options": {
+              "A": "UDP",
+              "B": "TCP",
+              "C": "SMB",
+              "D": "ICMP"
+            },
+            "correct_answer": ["A"],
+            "explanation": "RDP Shortpath を有効にすると、RDP トラフィックは UDP プロトコルで優先的に送信されます。UDP 接続が成功すれば TCP 接続は切断され、UDP が使用できない場合に TCP がフォールバックで使用されます:contentReference[oaicite:1]{index=1}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/plan-rdp-shortpath"
+            ]
+          },
+          {
+            "category": "ネットワーキング",
+            "question": "Azure Virtual Desktop の管理されたネットワーク (ExpressRoute や VPN) を利用し、クライアントとセッションホストが RDP Shortpath で直接 UDP 接続を確立する場合、セッションホスト側で必要な設定は何ですか？",
+            "options": {
+              "A": "セッションホストで RDP Shortpath リスナーを有効にし、関連する UDP ポートへの着信接続を許可する",
+              "B": "セッションホストで RDP Shortpath を無効化し、TCP 通信のみを使用する",
+              "C": "セッションホストにパブリックIPアドレスを割り当てて TCP 3389 ポートを公開する",
+              "D": "追加の VPN 接続は不要である"
+            },
+            "correct_answer": ["A"],
+            "explanation": "管理されたネットワーク環境 (ExpressRoute/VPN) で RDP Shortpath を使用する場合、セッションホストは RDP Shortpath リスナーを有効化し、RDP Shortpath が使用する UDP ポート（通常 3389/UDP）への着信接続を許可する必要があります:contentReference[oaicite:2]{index=2}。これによりクライアントとセッションホスト間で直接 UDP 経由の通信が可能になります。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/plan-rdp-shortpath"
+            ]
+          },
+          {
+            "category": "ネットワーキング",
+            "question": "Azure Virtual Desktop 環境で Private Link を使用すると、どのようなセキュリティ上の利点がありますか？",
+            "options": {
+              "A": "トラフィックが Microsoft のネットワーク内に留まり、リソースをパブリックインターネットに公開する必要がなくなる",
+              "B": "必要な場合にのみ追加の VPN 接続が必要になる",
+              "C": "パブリック IP を必ず使用する",
+              "D": "Private Link は Azure Virtual Desktop ではサポートされていない"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Private Link を利用すると、クライアントと Azure Virtual Desktop サービス間のトラフィックは Microsoft のバックボーン ネットワーク上に留まります。このため、Azure Virtual Desktop リソースをパブリックインターネットに公開せずに接続でき、セキュリティが向上します:contentReference[oaicite:3]{index=3}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/private-link"
+            ]
+          },
+          {
+            "category": "ネットワーキング",
+            "question": "Azure Virtual Desktop の RDP Shortpath 機能では、RDP セッションに優先度を設定するためにどのような QoS 設定を使用できますか？",
+            "options": {
+              "A": "VLAN タグ",
+              "B": "Differentiated Services Code Point (DSCP) マーク",
+              "C": "Azure ポリシー",
+              "D": "Traffic Manager ルーティング"
+            },
+            "correct_answer": ["B"],
+            "explanation": "RDP Shortpath を使用すると、Differentiated Services Code Point (DSCP) マークを使用して RDP 接続に QoS 優先度を設定できます:contentReference[oaicite:4]{index=4}。他の選択肢 (VLAN タグなど) は RDP Shortpath の QoS 設定ではありません。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/plan-rdp-shortpath"
+            ]
+          },
+          {
+            "category": "セキュリティ",
+            "question": "Azure Virtual Desktop 環境で Azure Bastion を使用する主な利点は何ですか？",
+            "options": {
+              "A": "Azure Bastion を介して RDP/SSH を行うため、VM にパブリック IP を割り当てる必要がない",
+              "B": "常に専用 VPN 接続が必要になる",
+              "C": "Azure ポータルから VM を操作できなくなる",
+              "D": "Azure Bastion は Azure Virtual Desktop では使用できない"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Bastion を使用すると、管理者はリモートデスクトップ (RDP) や SSH ポートをインターネットに公開することなく、Azure ポータルを介して安全に VM にアクセスできます:contentReference[oaicite:5]{index=5}。これにより、VM にパブリック IP を割り当てる必要がなくなります。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/bastion/bastion-overview"
+            ]
+          },
+          {
+            "category": "セキュリティ",
+            "question": "Azure Virtual Desktop では、ユーザーの接続時にどのような追加の Azure セキュリティ機能が利用可能ですか？",
+            "options": {
+              "A": "多要素認証 (MFA) と条件付きアクセス",
+              "B": "専用 VPN 接続のみ",
+              "C": "オンプレミスの AD DS のみ",
+              "D": "追加のセキュリティ機能は存在しない"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop では、多要素認証 (MFA) や条件付きアクセスなどの Azure セキュリティ機能を利用できます:contentReference[oaicite:6]{index=6}。これにより、ユーザーの接続時に追加の認証要素やアクセス制御ポリシーを設定できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/security-recommendations"
+            ]
+          },
+          {
+            "category": "セキュリティ",
+            "question": "Azure Virtual Desktop セッションホストのセキュリティを強化するために推奨される Microsoft のサービスはどれですか？",
+            "options": {
+              "A": "Microsoft Defender for Cloud (Azure Security Center) と Microsoft Defender for Endpoint",
+              "B": "他社製アンチウイルスのみ",
+              "C": "仮想ネットワークなし",
+              "D": "Azure Active Directory のみ"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop のセッションホストは Microsoft Defender for Cloud や Microsoft Defender for Endpoint を導入することで、脅威検出やセキュリティ保護を強化できます:contentReference[oaicite:7]{index=7}。他社製のツールだけでなく、これら Microsoft のクラウド ネイティブなセキュリティサービスの利用が推奨されます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/security/fundamentals/virtual-machines-security"
+            ]
+          },
+          {
+            "category": "セキュリティ",
+            "question": "Azure Virtual Desktop セッションホストで Windows Defender Application Control (WDAC) を有効にすると、どのような効果がありますか？",
+            "options": {
+              "A": "承認されたアプリケーションのみが実行され、悪意のあるソフトウェアの実行が防止される",
+              "B": "すべてのネットワーク接続が自動的に暗号化される",
+              "C": "デバイスのすべてのファイルが暗号化される",
+              "D": "パスワードポリシーが自動的に強制される"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Windows Defender Application Control (WDAC) は、承認されたアプリケーションのみを実行できるように制御する機能です。これにより、ホワイトリストに登録されていないアプリは実行できず、マルウェアの実行を防止します:contentReference[oaicite:8]{index=8}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/windows/security/threat-protection/microsoft-defender-application-control/wdac-overview"
+            ]
+          },
+          {
+            "category": "ストレージ",
+            "question": "Azure Virtual Desktop で FSLogix プロファイル コンテナーを格納するために推奨される Azure ストレージ ティアはどれですか？",
+            "options": {
+              "A": "Premium ファイル共有 (SSD)",
+              "B": "Standard ファイル共有 (HDD)",
+              "C": "Blob ストレージ (Hot)",
+              "D": "Azure Table Storage"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix プロファイル コンテナーには高い IOPS と低レイテンシが要求されるため、Azure Files の Premium (SSD) ティアが推奨されます。Premium ファイル共有は一貫した高性能と低遅延を提供し、プロファイルへの読み書きパフォーマンスを最適化します:contentReference[oaicite:9]{index=9}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/storage/files/storage-files-introduction"
+            ]
+          },
+          {
+            "category": "ストレージ",
+            "question": "Azure Virtual Desktop のセッションホストで Ephemeral OS ディスクを使用する主な利点は何ですか？",
+            "options": {
+              "A": "OS ディスクがローカル VM ストレージ上に作成され、VM のデプロイや再イメージ時に高速である",
+              "B": "OS ディスクのサイズ制限がなくなる",
+              "C": "データディスクが自動でバックアップされる",
+              "D": "永続的に停止状態をサポートする"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Ephemeral OS ディスクはローカルの VM ストレージ上に配置され、Azure Storage に保存されません。このため、VM の再イメージが高速で、OS ディスクへの I/O レイテンシが低減します:contentReference[oaicite:10]{index=10}。ただし、Ephemeral OS ディスクは停止状態からの再開をサポートせず、再起動時にデータがクリアされる点に注意が必要です。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-machines/ephemeral-os-disks"
+            ]
+          },
+          {
+            "category": "ストレージ",
+            "question": "Azure Virtual Desktop で FSLogix Cloud Cache 機能を使用する際、FSLogix プロファイル コンテナーを複数のストレージ アカウント間でレプリケートできます。最大で何個のストレージ アカウントにレプリケートできますか？",
+            "options": {
+              "A": "4",
+              "B": "2",
+              "C": "6",
+              "D": "無制限"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix Cloud Cache 機能では、ユーザーのプロファイル コンテナーを最大 4 つの異なるストレージ アカウントに複製できます:contentReference[oaicite:11]{index=11}。これにより複数リージョンへの可用性や冗長性を確保できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/business-continuity-disaster-recovery"
+            ]
+          },
+          {
+            "category": "ストレージ",
+            "question": "Azure Virtual Desktop で FSLogix プロファイル コンテナーを保存するためのストレージ オプションのうち、最も高い IOPS 性能を提供するものはどれですか？",
+            "options": {
+              "A": "Azure NetApp Files",
+              "B": "Azure Files Premium",
+              "C": "Azure Files Standard",
+              "D": "Azure Disk (Standard SSD)"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure NetApp Files は非常に高いスループットと IOPS を提供できます。ドキュメントによれば、Azure NetApp Files は最大 460,000 IOPS、4.5 GiB/秒 のスループットを提供できます。一方、Azure Files Premium は最大 100,000 IOPS です:contentReference[oaicite:12]{index=12}。したがって、最高性能が必要な場合は Azure NetApp Files が最適です。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/storage/files/storage-files-performance-targets"
+            ]
+          },
+          {
+            "category": "ストレージ",
+            "question": "Azure Virtual Desktop の FSLogix プロファイル コンテナーを保存する Azure ファイル共有で推奨される冗長オプションはどれですか？",
+            "options": {
+              "A": "Geo-冗長ストレージ (GRS)",
+              "B": "ローカル冗長ストレージ (LRS)",
+              "C": "ゾーン冗長ストレージ (ZRS)",
+              "D": "冗長化しない (None)"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix プロファイル コンテナーを保存するストレージでは、Azure Storage の Geo-冗長ストレージ (GRS) または RA-GRS を使用して別リージョンにも複製しておくことが推奨されます:contentReference[oaicite:13]{index=13}。GRS を使用すると、障害時にも別リージョンからデータアクセスが可能になり、冗長性が向上します。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/business-continuity-disaster-recovery"
+            ]
+          },
+          {
+            "category": "ホスト プール",
+            "question": "Azure Virtual Desktop のプール済みホストプールの特徴は何ですか？",
+            "options": {
+              "A": "1 つのセッションホストに複数のユーザーが同時に接続可能",
+              "B": "各ユーザーに専用のセッションホストが割り当てられる",
+              "C": "個人用ホストプールと同義である",
+              "D": "スケーリングできない"
+            },
+            "correct_answer": ["A"],
+            "explanation": "プール済みホストプールでは、ホストプール内の任意のセッションホストにユーザー セッションが負荷分散され、1 台のセッションホストに複数のユーザーが同時に存在することが可能です:contentReference[oaicite:14]{index=14}。これは共有デスクトップ環境を実現し、コストと効率の最適化を図ります。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/terminology"
+            ]
+          },
+          {
+            "category": "ホスト プール",
+            "question": "Azure Virtual Desktop でプール済みホストプールにマルチセッション機能を使用できる OS はどれですか？",
+            "options": {
+              "A": "Windows 10 Enterprise マルチセッション および Windows 11 Enterprise マルチセッション",
+              "B": "Windows 10 Pro",
+              "C": "Windows 8.1",
+              "D": "Windows Server 2012"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop でプール済みホストプールにマルチセッションを利用するには、Windows 10 Enterprise マルチセッションまたは Windows 11 Enterprise マルチセッションが必要です。これらは Azure Virtual Desktop 独自の機能であり、Windows Server でもマルチセッションはサポートされますが、選択肢の中では Windows 10/11 Enterprise マルチセッションが正解です:contentReference[oaicite:15]{index=15}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/overview"
+            ]
+          },
+          {
+            "category": "ホスト プール",
+            "question": "Azure Virtual Desktop のホストプールでサポートされているセッションホストの負荷分散アルゴリズムはどれですか？",
+            "options": {
+              "A": "幅優先 (Breadth-first) と 深さ優先 (Depth-first)",
+              "B": "ラウンドロビン",
+              "C": "最小接続数",
+              "D": "重み付き負荷分散"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop のホストプールでは、ユーザーセッションの負荷分散アルゴリズムとして「幅優先 (Breadth-first)」と「深さ優先 (Depth-first)」の 2 種類がサポートされています:contentReference[oaicite:16]{index=16}。これにより、セッションホストへのセッション割り当ての方式を選択できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/terminology"
+            ]
+          },
+          {
+            "category": "ホスト プール",
+            "question": "Azure Virtual Desktop の「Start VM on Connect」機能の主な動作は何ですか？",
+            "options": {
+              "A": "ユーザーが接続するときに休止中のセッションホスト VM を自動的に起動する",
+              "B": "ユーザーが切断するときに VM を常にシャットダウンする",
+              "C": "アプリケーションの起動時間を短縮する",
+              "D": "セッションの帯域幅を優先的に割り当てる"
+            },
+            "correct_answer": ["A"],
+            "explanation": "\"Start VM on Connect\" 機能は、ユーザーが接続を試みたときに、休止中 (非アクティブ) のセッションホスト VM を自動的に起動してセッションを提供します:contentReference[oaicite:17]{index=17}。これにより、必要なときにのみ VM が起動され、コストを削減できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/start-virtual-machine-connect"
+            ]
+          },
+          {
+            "category": "ホスト プール",
+            "question": "Azure Virtual Desktop のホストプールでオートスケール (Auto-scale) を有効にする際、プール済みホストプールで必ず設定しなければならないホストプールのパラメーターはどれですか？",
+            "options": {
+              "A": "MaxSessionLimit (ホストプールの最大セッション数)",
+              "B": "ComputeSkyコア数",
+              "C": "VNet のサブネットCIDR",
+              "D": "AD ドメイン名"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop の組み込みオートスケール機能をプール済みホストプールで使用するには、ホストプールの設定で `MaxSessionLimit` パラメーターを適切に構成しておく必要があります:contentReference[oaicite:18]{index=18}。これはホストプール内の VM あたりの最大セッション数を定義するもので、オートスケールの動作に影響します。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/autoscale-create-assign-scaling-plan"
+            ]
+          },
+          {
+            "category": "アイデンティティ",
+            "question": "Azure Virtual Desktop のセッションホスト VM において、オンプレミス AD ドメインコントローラーへの接続が不要となる新しい展開方法はどれですか？",
+            "options": {
+              "A": "Microsoft Entra ID (Azure AD) に VM を参加させる",
+              "B": "従来通りオンプレミス AD DS に参加させる",
+              "C": "Azure Arc を使用する",
+              "D": "オンプレミス共有 (SMB) を使用する"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop では、セッションホスト VM を Microsoft Entra (Azure) ID に参加させることが可能です。これにより、オンプレミスの Active Directory ドメインコントローラーへの接続や Azure AD DS の導入が不要になり、Azure AD で直接認証できる環境を構築できます:contentReference[oaicite:19]{index=19}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/azure-ad-joined-session-hosts"
+            ]
+          },
+          {
+            "category": "アイデンティティ",
+            "question": "Azure Virtual Desktop のホストプールを管理するために必要な組み込みの Azure RBAC ロールはどれですか？",
+            "options": {
+              "A": "Desktop Virtualization Host Pool Contributor",
+              "B": "Virtual Machine Contributor",
+              "C": "Network Contributor",
+              "D": "Reader"
+            },
+            "correct_answer": ["A"],
+            "explanation": "\"Desktop Virtualization Host Pool Contributor\" ロールは、ホストプールの管理 (セッションホストの作成や設定など) に必要な権限を提供します:contentReference[oaicite:20]{index=20}。他の一般的な権限 (VM Contributor など) では AVD のホストプール管理に必要な操作をすべて網羅できません。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/rbac"
+            ]
+          },
+          {
+            "category": "アイデンティティ",
+            "question": "Azure Virtual Desktop でサポートされる認証オプションにはどれがありますか？",
+            "options": {
+              "A": "多要素認証 (MFA), スマートカード認証, パスワードレス認証",
+              "B": "ユーザー名/パスワードのみ",
+              "C": "Windows Hello のみ",
+              "D": "資格情報なし"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop では、多要素認証 (MFA) やスマートカード、パスワードレス認証など、さまざまな認証オプションを利用できます:contentReference[oaicite:21]{index=21}。これらはセキュリティポリシーに応じて組み合わせて使用可能です。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/authentication-options"
+            ]
+          },
+          {
+            "category": "アイデンティティ",
+            "question": "Azure Virtual Desktop のホストプールに Microsoft Entra (Azure AD) 参加した VM を含める場合、セッションホストに必要な OS のバージョン要件はどれですか？",
+            "options": {
+              "A": "Windows 10/11 (バージョン 2004 以降) または Windows Server 2019/2022",
+              "B": "Windows 10 バージョン 1909 以下",
+              "C": "Windows Server 2016 以下",
+              "D": "Linux ベースの OS"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure AD 参加した VM をホストプールに含めるには、Windows 10/11 (バージョン 2004 以降) または Windows Server 2019/2022 が必要です:contentReference[oaicite:22]{index=22}。これらの OS 以外では Azure AD 参加がサポートされていません。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/azure-ad-joined-session-hosts"
+            ]
+          },
+          {
+            "category": "モニタリング",
+            "question": "Azure Virtual Desktop Insights を有効にして監視を行うために、Log Analytics ワークスペースで収集すべきデータの組み合わせはどれですか？",
+            "options": {
+              "A": "Azure Virtual Desktop の診断ログ、推奨されるパフォーマンスカウンター、推奨されるイベントログ",
+              "B": "アプリケーションの使用ログのみ",
+              "C": "ネットワークトラフィックデータのみ",
+              "D": "ユーザーの Azure AD サインインログのみ"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop Insights を使用するためには、Log Analytics ワークスペースで以下のデータを収集する必要があります: AVD 環境からの診断ログ、セッションホストの推奨パフォーマンスカウンター、推奨イベントログ:contentReference[oaicite:23]{index=23}。これにより、インサイト ダッシュボードで必要な情報が表示されます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/insights"
+            ]
+          },
+          {
+            "category": "モニタリング",
+            "question": "Azure Virtual Desktop Insights を参照するために必要な Azure RBAC ロールには何がありますか？",
+            "options": {
+              "A": "Desktop Virtualization Reader と Log Analytics Reader",
+              "B": "Owner ロールのみ",
+              "C": "Virtual Machine Contributor",
+              "D": "Monitor Reader"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop Insights を表示するには、対象のホストプールと作業ディレクトリに対して「Desktop Virtualization Reader」ロールと、対象のログ分析ワークスペースに対して「Log Analytics Reader」ロールが最低限必要です:contentReference[oaicite:24]{index=24}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/insights"
+            ]
+          },
+          {
+            "category": "モニタリング",
+            "question": "Azure Virtual Desktop Insights はどのような形式で提供されるダッシュボードですか？",
+            "options": {
+              "A": "Azure Monitor Workbooks ベースのダッシュボード",
+              "B": "Power BI ダッシュボード",
+              "C": "オンプレミスのレポートツール",
+              "D": "Excel ファイル"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop Insights は Azure Monitor Workbooks をベースにしたダッシュボードで、AVD 環境に関する様々な分析情報を提供します:contentReference[oaicite:25]{index=25}。他の選択肢は誤りです。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/insights"
+            ]
+          },
+          {
+            "category": "モニタリング",
+            "question": "ホストプールのオートスケールを使用する際、プール済みホストプールで VM をスケールアウトする要件として必要な設定はどれですか？",
+            "options": {
+              "A": "MaxSessionLimit パラメーターの構成 (デフォルト値以外)",
+              "B": "ホストプールの VM 数を手動で増やす",
+              "C": "Azure AD テナントを複数使用する",
+              "D": "オンプレミス AD への常時接続"
+            },
+            "correct_answer": ["A"],
+            "explanation": "プール済みホストプールでオートスケール機能を使用する場合、MaxSessionLimit パラメーターを適切な値に構成しておく必要があります。デフォルト値を変更し、ホストプールの最大セッション数を設定することでスケーリングが正しく動作します:contentReference[oaicite:26]{index=26}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/autoscale-create-assign-scaling-plan"
+            ]
+          },
+          {
+            "category": "モニタリング",
+            "question": "Azure Virtual Desktop 環境を監視するために推奨される Log Analytics ワークスペースの構成は何ですか？",
+            "options": {
+              "A": "セッションホスト用の専用 Log Analytics ワークスペースを使用する",
+              "B": "すべての VM のデータを集約する共有ワークスペースを使用する",
+              "C": "ワークスペースは不要である",
+              "D": "各ユーザーに専用ワークスペースを割り当てる"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop の監視では、セッションホストからのデータ収集専用に Log Analytics ワークスペースを設置することが推奨されています:contentReference[oaicite:27]{index=27}。これにより AVD 関連のパフォーマンス カウンターとログのみを収集でき、データの分離と整理が容易になります。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/insights"
+            ]
+          },
+          {
+            "category": "自動化",
+            "question": "Azure Virtual Desktop でホストプールやセッションホストを自動化するには、どのツールが使用できますか？",
+            "options": {
+              "A": "Azure PowerShell、Azure CLI、ARM テンプレート、Bicep",
+              "B": "専用のスタンドアロン ツールキットのみ",
+              "C": "Windows Admin Center",
+              "D": "Azure Portal での手動操作のみ"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop のデプロイと管理には、Azure PowerShell コマンドレット、Azure CLI、ARM テンプレート、Bicep などの様々なツールが使用できます:contentReference[oaicite:28]{index=28}。これらを利用するとホストプールやセッションホストをコードで自動化できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/tutorial-host-pool-ARM-powershell"
+            ]
+          },
+          {
+            "category": "自動化",
+            "question": "Azure Virtual Desktop ホストプールのオートスケールを、Azure Automation と Azure Logic Apps を使ったスケーリング ツールで実装する場合、どのような仕組みが利用されますか？",
+            "options": {
+              "A": "Azure Automation のランブックと Azure Logic Apps でセッションホスト VM の起動/停止を自動化する",
+              "B": "Azure Policy で VM の数を管理する",
+              "C": "Azure Front Door でトラフィックを分散してスケーリングする",
+              "D": "Azure Backup でスケジュールされたタスクを実行する"
+            },
+            "correct_answer": ["A"],
+            "explanation": "AVD の従来型オートスケールには、Azure Automation の PowerShell ランブックと Azure Logic Apps を組み合わせたスケーリング ツールが提供されています:contentReference[oaicite:29]{index=29}。この組み合わせにより、セッションホスト VM の電源オン/オフを自動化できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/set-up-scaling-script"
+            ]
+          },
+          {
+            "category": "自動化",
+            "question": "Azure Virtual Desktop を Azure CLI または PowerShell で操作する際に必要な拡張機能またはモジュールは何ですか？",
+            "options": {
+              "A": "Azure PowerShell の Az.DesktopVirtualization モジュール または Azure CLI の desktopvirtualization 拡張機能",
+              "B": "Azure PowerShell の Az.Compute モジュール",
+              "C": "Azure PowerShell の Az.Network モジュール",
+              "D": "追加の拡張機能は不要"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop をプログラムで操作するには、Azure PowerShell 用の `Az.DesktopVirtualization` モジュールまたは Azure CLI 用の `desktopvirtualization` 拡張機能が必要です:contentReference[oaicite:30]{index=30}。これらをインストールしておくことで、AVD 関連コマンドレット/コマンドを利用できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/start-virtual-machine-connect"
+            ]
+          },
+          {
+            "category": "自動化",
+            "question": "Azure Automation と Azure Logic Apps を使用するスケーリング ツールでマネージド ID を作成する際、必要な Azure AD の権限は何ですか？",
+            "options": {
+              "A": "アプリケーション管理者または所有者 (Owner) ロール",
+              "B": "仮想マシン共同作成者 ロール",
+              "C": "ログ分析読者 ロール",
+              "D": "リソース グループ共同作成者 ロール"
+            },
+            "correct_answer": ["A"],
+            "explanation": "スケーリング ツールでマネージド ID を作成するには、Azure AD のアプリケーション管理者 または 所有者 (Owner) 権限が必要です:contentReference[oaicite:31]{index=31}。これらの権限がないと、マネージド ID の登録が行えません。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/set-up-scaling-script"
+            ]
+          },
+          {
+            "category": "ライセンス",
+            "question": "Azure Virtual Desktop で Windows 10/11 Enterprise マルチセッションを使用するために必要なライセンスはどれですか？",
+            "options": {
+              "A": "Microsoft 365 E3/E5 (Windows 10/11 Enterprise ライセンス含む)",
+              "B": "Windows 10/11 Enterprise E3/E5 ライセンス",
+              "C": "Windows 10 Home 版",
+              "D": "RDS SAL (Windows Server 向けライセンス)"
+            },
+            "correct_answer": ["A", "B"],
+            "explanation": "Azure Virtual Desktop で Windows 10/11 Enterprise マルチセッションを利用するには、Microsoft 365 E3/E5 など Windows 10/11 Enterprise が含まれるライセンス、または単体の Windows 10/11 Enterprise E3/E5 (マルチテナント ホスティング対応版) が必要です:contentReference[oaicite:32]{index=32}。Windows 10 Home では使用できず、RDS SAL はサーバー OS 用のライセンスです。",
+            "references": [
+              "https://azure.microsoft.com/ja-jp/pricing/details/virtual-desktop/"
+            ]
+          },
+          {
+            "category": "ライセンス",
+            "question": "Azure Virtual Desktop で Windows Server セッションホストを使用するために必要なユーザー アクセス ライセンス (User Access Right) はどれですか？",
+            "options": {
+              "A": "有効な RDS CAL (Software Assurance 付き)",
+              "B": "RDS SAL (Subscriber Access License, 2025年9月まで提供)",
+              "C": "Microsoft 365 E3/E5 ライセンス",
+              "D": "Windows 10 VDA ライセンス"
+            },
+            "correct_answer": ["A", "B"],
+            "explanation": "Windows Server 2019 以降をセッションホストに使う場合、Azure Virtual Desktop へのアクセス権として有効な RDS カレンソフトウェアアシュアランス付き CAL または RDS Subscriber Access License (SAL) が必要です:contentReference[oaicite:33]{index=33}。これらがない場合、Windows Server では AVD を利用できません。",
+            "references": [
+              "https://azure.microsoft.com/ja-jp/pricing/details/virtual-desktop/"
+            ]
+          },
+          {
+            "category": "パフォーマンス",
+            "question": "Azure Virtual Desktop セッションホストでグラフィックス集約型ワークロード (CAD や 3D) を実行する場合に推奨される仮想マシンのシリーズはどれですか？",
+            "options": {
+              "A": "NV シリーズ (NVIDIA GPU 搭載)",
+              "B": "Dsv3 シリーズ (汎用型)",
+              "C": "B シリーズ (低負荷型)",
+              "D": "F シリーズ (コンピュート最適化)"
+            },
+            "correct_answer": ["A"],
+            "explanation": "CAD や 3D グラフィックスを扱う場合は、NVIDIA Tesla GPU を搭載した NV シリーズやその派生 (NVv3/NVv4) VM を使用します。これらは専用の GPU と NVIDIA GRID 技術により優れたグラフィックス性能を提供します:contentReference[oaicite:34]{index=34}。他のシリーズではグラフィックス性能が不足します。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-machines/sizes/gpu-accelerated/nv-series"
+            ]
+          },
+          {
+            "category": "パフォーマンス",
+            "question": "Azure Virtual Desktop の FSLogix プロファイル コンテナーでログオン パフォーマンスを向上させるために有効な設定はどれですか？",
+            "options": {
+              "A": "FSLogix Office コンテナーを有効にして Outlook/OneDrive データを分離する",
+              "B": "FSLogix プロファイル コンテナーを暗号化する",
+              "C": "すべてのプロファイル データを 1 つの大きな VHD に結合する",
+              "D": "セッションホストのメモリを最小限にする"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix の Office コンテナー機能を有効にすると、Outlook の OST ファイルや OneDrive のキャッシュなど Office 関連データを分離して保存できます。これによりプロファイル本体のサイズを削減し、ログオン時間を短縮できます:contentReference[oaicite:35]{index=35}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/security-recommendations"
+            ]
+          },
+          {
+            "category": "FSLogix",
+            "question": "Azure AD (Microsoft Entra) 参加したセッションホストで FSLogix プロファイル コンテナーを使用するには、どのようなストレージ構成が必要ですか？",
+            "options": {
+              "A": "Azure Files を Microsoft Entra Kerberos でドメイン参加してマウントする",
+              "B": "オンプレミス AD に参加して Azure Files をマウントする",
+              "C": "Azure Files 共有をパブリックに公開する",
+              "D": "Azure Blob Storage を使用する"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure AD 参加ホストでは、FSLogix プロファイル コンテナー用に Azure Files 共有を使用し、Azure AD Kerberos でアクセスする必要があります:contentReference[oaicite:36]{index=36}。これによりオンプレミス AD の依存を排除できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/azure-ad-joined-session-hosts"
+            ]
+          },
+          {
+            "category": "FSLogix",
+            "question": "FSLogix Profile Container の主な機能は何ですか？",
+            "options": {
+              "A": "ユーザープロファイルを仮想ディスク (VHD) ファイルに格納する",
+              "B": "Outlook データのみを別コンテナに保存する",
+              "C": "アプリケーションを隔離して実行する",
+              "D": "セッションホストのイメージを管理する"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix Profile Container は、ユーザー プロファイル全体を仮想ハードディスク (VHD/VHDX) ファイルに格納し、ネットワーク共有に保存します:contentReference[oaicite:37]{index=37}。これにより、複数のセッションホスト間でプロファイルを一貫して利用できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/security-recommendations"
+            ]
+          },
+          {
+            "category": "FSLogix",
+            "question": "FSLogix Cloud Cache 機能で、ユーザープロファイルをレプリケートできるストレージ アカウントの最大数は何個ですか？",
+            "options": {
+              "A": "4",
+              "B": "2",
+              "C": "8",
+              "D": "無制限"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix Cloud Cache では、最大 4 個の異なるストレージ アカウント間でプロファイル コンテナーをレプリケートできます:contentReference[oaicite:38]{index=38}。これによりリージョン間の可用性を高めることができます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/business-continuity-disaster-recovery"
+            ]
+          },
+          {
+            "category": "FSLogix",
+            "question": "FSLogix プロファイル コンテナー (VHD/VHDX) ファイルに対して、アンチウイルス スキャンで推奨される設定はどれですか？",
+            "options": {
+              "A": "VHD/VHDX 拡張子をスキャン対象から除外する",
+              "B": "FSLogix サービスを停止してスキャンする",
+              "C": "ファイル共有全体をスキャンする",
+              "D": "アンチウイルスを無効にする"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix プロファイル コンテナーはサイズが大きく更新頻度も高いため、ウイルス スキャンの対象から VHD/VHDX ファイルを除外することが推奨されます:contentReference[oaicite:39]{index=39}。これによりログオンパフォーマンスへの影響を最小限に抑えられます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/security-recommendations"
+            ]
+          },
+          {
+            "category": "FSLogix",
+            "question": "FSLogix Office コンテナーは何を分離して保存しますか？",
+            "options": {
+              "A": "Outlook の OST キャッシュや OneDrive クライアントのキャッシュなどの Office 関連データ",
+              "B": "すべてのユーザープロファイル データ",
+              "C": "Windows Update のダウンロード",
+              "D": "Azure ポータル設定"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix Office コンテナーは、Outlook の OST ファイルや OneDrive のキャッシュ、Teams のキャッシュなど Office に関連する大容量データを分離して保存します。これにより、プロファイル本体のサイズを削減しログオン時間を短縮できます:contentReference[oaicite:40]{index=40}。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/security-recommendations"
+            ]
+          },
+          {
+            "category": "クライアント",
+            "question": "Azure Virtual Desktop のリモートセッションで、ユーザーのローカル デバイスからリダイレクトして使用できる機能はどれですか？",
+            "options": {
+              "A": "ローカルドライブ、ローカルプリンタ、USB デバイス",
+              "B": "仮想マシンの BIOS 設定",
+              "C": "オンプレミス AD DS の管理ツール",
+              "D": "Azure データセンターの物理コンソール"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop の RDP セッションでは、ユーザーのローカル デバイスにあるドライブ、プリンタ、USB デバイスなどをセッション内にリダイレクトできます:contentReference[oaicite:41]{index=41}。必要に応じてこれらのリダイレクト機能を有効または無効にしてセキュリティ要件に合わせることが推奨されます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/security-recommendations"
+            ]
+          },
+          {
+            "category": "バックアップ/復旧",
+            "question": "Azure Virtual Desktop ホストプールのディザスター リカバリー (DR) 構成で使用できるサービスはどれですか？",
+            "options": {
+              "A": "Azure Site Recovery",
+              "B": "Azure Backup",
+              "C": "Azure Policy",
+              "D": "Azure Automation"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop のホストプールを別リージョンに複製する場合、Azure Site Recovery を使用して VM のレプリケーションを構成できます:contentReference[oaicite:42]{index=42}。Azure Backup などはホストプール全体の DR には適さず、ASR が推奨されます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/business-continuity-disaster-recovery"
+            ]
+          },
+          {
+            "category": "バックアップ/復旧",
+            "question": "FSLogix プロファイルを保存するストレージでデータの冗長性を確保するために推奨される設定はどれですか？",
+            "options": {
+              "A": "Geo-冗長ストレージ (GRS)",
+              "B": "ローカル冗長ストレージ (LRS)",
+              "C": "冗長化しない",
+              "D": "ZRS (ゾーン冗長のみ)"
+            },
+            "correct_answer": ["A"],
+            "explanation": "FSLogix プロファイル コンテナーは重要なデータなので、Azure Storage の Geo-冗長ストレージ (GRS) を使用して別リージョンにも複製しておくことが推奨されます:contentReference[oaicite:43]{index=43}。これによりデータセンター障害時でもデータを保持できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/business-continuity-disaster-recovery"
+            ]
+          },
+          {
+            "category": "バックアップ/復旧",
+            "question": "Azure Virtual Desktop 環境でホストプールのアクティブ-パッシブ構成 (フェイルオーバー構成) を実現するために一般的に検討されるオプションはどれですか？",
+            "options": {
+              "A": "Azure Site Recovery または別のリージョンに構築したセカンダリホストプール",
+              "B": "Azure Backup を常時実行する",
+              "C": "Virtual Machine Scale Set に変換する",
+              "D": "Azure Policy を使用する"
+            },
+            "correct_answer": ["A"],
+            "explanation": "Azure Virtual Desktop の DR 構成では、Active-Passive 構成として一般に Azure Site Recovery を使用するか、別リージョンに同一構成のホストプールを用意します:contentReference[oaicite:44]{index=44}。これにより、プライマリリージョンで障害が発生した際に迅速にフェイルオーバーできます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/business-continuity-disaster-recovery"
+            ]
+          },
+          {
+            "category": "アプリケーション",
+            "question": "Azure Virtual Desktop におけるアプリケーション グループの役割は何ですか？",
+            "options": {
+              "A": "ホストプール内のセッションホストで使用可能なフルデスクトップやアプリケーションをユーザーに公開する",
+              "B": "ホストプールの課金単価を設定する",
+              "C": "Azure Virtual Desktop のライセンスを管理する",
+              "D": "ユーザーの Azure AD グループを定義する"
+            },
+            "correct_answer": ["A"],
+            "explanation": "アプリケーション グループは、ホストプール内のセッションホストで実行可能なフルデスクトップやリモートアプリケーションをユーザーに対して制御・公開します:contentReference[oaicite:45]{index=45}。ユーザーは適切なアプリケーショングループに割り当てられている必要があります。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/terminology"
+            ]
+          },
+          {
+            "category": "アプリケーション",
+            "question": "Azure Virtual Desktop のアプリケーショングループで「デスクトップ」と「RemoteApp」タイプの主な違いは何ですか？",
+            "options": {
+              "A": "「デスクトップ」はユーザーに完全な Windows デスクトップを提供し、「RemoteApp」は個別のアプリケーションのみを提供する",
+              "B": "「RemoteApp」は個人用ホストプールでのみ使用できる",
+              "C": "「デスクトップ」は Web クライアントでしか使えない",
+              "D": "「RemoteApp」はマルチセッションでは使用できない"
+            },
+            "correct_answer": ["A"],
+            "explanation": "アプリケーショングループの「デスクトップ」タイプはユーザーに完全な Windows デスクトップ環境を提供し、「RemoteApp」タイプは選択された個々のアプリケーションのみをユーザーに提供します:contentReference[oaicite:46]{index=46}。この違いにより、ユーザーに全画面デスクトップを渡すか、特定のアプリだけを公開するかを選択できます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/terminology"
+            ]
+          },
+          {
+            "category": "アプリケーション",
+            "question": "MSIX App Attach を使用してアプリケーションを配信する場合、セッションホストに求められる条件は何ですか？",
+            "options": {
+              "A": "Windows クライアント OS (Windows 10/11 Enterprise) を実行している必要がある",
+              "B": "Windows Server OS (2019/2022) を実行している必要がある",
+              "C": "App-V クライアントを導入する必要がある",
+              "D": "Linux ベースのコンテナを使用する"
+            },
+            "correct_answer": ["A"],
+            "explanation": "MSIX App Attach でアプリを配信するには、セッションホストが Windows 10/11 Enterprise (シングル/マルチセッション) などのクライアント OS を実行している必要があります:contentReference[oaicite:47]{index=47}。Windows Server OS では MSIX App Attach はサポートされません。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/app-attach-overview"
+            ]
+          },
+          {
+            "category": "アプリケーション",
+            "question": "MSIX App Attach でユーザーにアプリケーションを提供するために必要な前提条件はどれですか？",
+            "options": {
+              "A": "アプリケーションがホストプールに追加され、対象のアプリケーショングループに含まれている",
+              "B": "ユーザーが対象のアプリケーショングループに割り当てられている",
+              "C": "ユーザーが高権限 (管理者) である",
+              "D": "セッションホストにローカルアプリが事前インストールされている"
+            },
+            "correct_answer": ["A", "B"],
+            "explanation": "MSIX App Attach では、ユーザーがアプリを利用するには次の条件がすべて必要です: アプリがホストプールに追加されていること、アプリケーショングループに割り当てられていること、そしてユーザーが該当アプリケーショングループに割り当てられていること:contentReference[oaicite:48]{index=48}。これにより、適切なユーザーに適切なアプリが配布されます。",
+            "references": [
+              "https://learn.microsoft.com/ja-jp/azure/virtual-desktop/app-attach-overview"
+            ]
           }
     ]
 }
